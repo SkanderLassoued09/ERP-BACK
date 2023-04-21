@@ -29,9 +29,9 @@ export class ProfileService {
     return `This action returns all profile`;
   }
 
-  async findOneForAuth(userName: string): Promise<Profile | undefined> {
+  async findOneForAuth(username: string): Promise<Profile | undefined> {
     return await this.profileModel
-      .findOne({ userName })
+      .findOne({ username })
       .then((res) => {
         console.log('find one auth ', res);
         return res;

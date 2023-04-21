@@ -10,7 +10,7 @@ export class CreateAuthInput {
 @ObjectType()
 export class LoginResponse {
   @Field()
-  token: string;
+  access_token: string;
   @Field()
   profile: Profile;
 }

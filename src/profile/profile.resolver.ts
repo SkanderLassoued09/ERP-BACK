@@ -22,10 +22,10 @@ export class ProfileResolver {
     return this.profileService.findAll();
   }
 
-  // @Query(() => Profile, { name: 'profile' })
-  // findOne(@Args('id', { type: () => Int }) id: number) {
-  //   return this.profileService.findOne(id);
-  // }
+  @Query(() => Profile)
+  async findOne(@Args('username') username: string) {
+    return await this.profileService.findOneForAuth(username);
+  }
 
   @Mutation(() => Profile)
   updateProfile(

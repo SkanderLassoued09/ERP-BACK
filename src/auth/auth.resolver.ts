@@ -4,14 +4,17 @@ import { Auth } from './entities/auth.entity';
 import { LoginAuthInput, LoginResponse } from './dto/create-auth.input';
 import { JwtAuthGuard } from './jwt-auth-guard';
 import { UseGuards } from '@nestjs/common';
+import { GqlAuthGuard } from './gql-auth-guard';
 
 @Resolver(() => Auth)
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Mutation(() => LoginResponse)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GqlAuthGuard)
   async login(@Args('LoginAuthInput') loginAuthInput: LoginAuthInput) {
-    return this.authService.signIn(loginAuthInput);
+    let data = await this.authService.login(loginAuthInput);
+    console.log('login', data);
+    return data;
   }
 }

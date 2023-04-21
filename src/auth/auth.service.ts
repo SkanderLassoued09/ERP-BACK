@@ -16,55 +16,71 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.profileService.findOneForAuth(username);
-    if (user && user.password === pass) {
-      const { password, ...result } = user;
-      return result;
+  // async validateUser(username: string, pass: string): Promise<any> {
+  //   const profile = await this.profileService.findOneForAuth(username);
+  //   console.log('profile data', profile);
+  //   if (!profile) {
+  //     throw new HttpException('No email found', HttpStatus.UNAUTHORIZED);
+  //   }
+  //   const matchPassword = await bcrypt.compare(pass, profile.password);
+  //   if (!matchPassword) {
+  //     throw new HttpException('No psw found', HttpStatus.UNAUTHORIZED);
+  //   }
+
+  //   if (profile) {
+  //     const matchpassword = await bcrypt.compare(pass, profile.password);
+  //     if (matchpassword) {
+  //       const { password, ...result } = profile;
+
+  //       return result;
+  //     }
+  //   }
+  //   return null;
+  // }
+
+  // !To check this function
+  async validateUser(username: string, password: string): Promise<any> {
+    let user = await this.profileService.findOneForAuth(username);
+
+    if (!user) {
+      // throw new HttpException(
+      //   `${email} n'existe pas dans notre base de données`,
+      // );
+      throw new HttpException('No email found', HttpStatus.UNAUTHORIZED);
     }
-    return null;
+    const matchPassword = await bcrypt.compare(password, user.password);
+    if (!matchPassword) {
+      // throw new UnauthorizedException(
+      //   `Le mot de passe que vous avez saisi ne correspond pas à nos données`,
+      // );
+      throw new HttpException('No psw found', HttpStatus.UNAUTHORIZED);
+    }
+
+    if (user) {
+      const matchpassword = await bcrypt.compare(password, user.password);
+      if (matchpassword) {
+        const { password, ...result } = user;
+
+        return result;
+      }
+    }
+    // return null;
   }
 
-  async signIn(loginAuthInput: LoginAuthInput) {
-    const profile = await this.profileService.findOneForAuth(
+  async login(loginAuthInput: LoginAuthInput) {
+    const user = await this.profileService.findOneForAuth(
       loginAuthInput.username,
     );
-    if (!profile) {
-      throw new HttpException('E-mail introuvable', HttpStatus.UNAUTHORIZED);
-    } else {
-      const matchPassword = await bcrypt.compare(
-        loginAuthInput.pass,
-        profile.password,
-      );
-      if (!matchPassword) {
-        throw new HttpException(
-          'le mot de passe est erroné',
-          HttpStatus.UNAUTHORIZED,
-        );
-      }
-    }
 
-    if (profile) {
-      const matchpassword = await bcrypt.compare(
-        loginAuthInput.pass,
-        profile.password,
-      );
-      if (matchpassword) {
-        const { password, ...rest } = profile;
-
-        return rest;
-      }
-    }
+    const { password, ...result } = user;
 
     return {
-      token: this.jwtService.sign({
-        email: profile.email,
-        role: profile.role,
-        firstName: profile.firstName,
+      access_token: this.jwtService.sign({
+        email: user.email,
+        username: user.username,
+        role: user.role,
       }),
-      profile,
+      user,
     };
-    // // TODO: Generate a JWT and return it here
-    // // instead of the user object
   }
 }

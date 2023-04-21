@@ -17,7 +17,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // Decode JWT
     return {
       role: payload.role,
-      firstname: payload.firstname,
+      username: payload.username,
+      email: payload.email,
     };
   }
 }

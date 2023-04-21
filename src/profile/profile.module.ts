@@ -14,5 +14,6 @@ import { JwtModule } from '@nestjs/jwt';
     MongooseModule.forFeature([{ name: 'Profile', schema: ProfileSchema }]),
   ],
   providers: [ProfileService, ProfileResolver],
+  exports: [ProfileService],
 })
 export class ProfileModule {}

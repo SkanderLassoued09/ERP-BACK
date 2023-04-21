@@ -4,10 +4,8 @@ import { AuthResolver } from './auth.resolver';
 import { ProfileModule } from 'src/profile/profile.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { ProfileService } from 'src/profile/profile.service';
 import { LocalStrategy } from './local.strategy';
-import { MongooseModule } from '@nestjs/mongoose';
-import { ProfileSchema } from 'src/profile/entities/profile.entity';
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
@@ -17,8 +15,7 @@ import { ProfileSchema } from 'src/profile/entities/profile.entity';
       signOptions: { expiresIn: '365d' },
       secret: 'hide-me',
     }),
-    MongooseModule.forFeature([{ name: 'Profile', schema: ProfileSchema }]),
   ],
-  providers: [AuthResolver, AuthService, ProfileService, LocalStrategy],
+  providers: [AuthResolver, AuthService, LocalStrategy, JwtStrategy],
 })
 export class AuthModule {}

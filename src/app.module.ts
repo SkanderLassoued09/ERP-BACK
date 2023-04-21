@@ -20,6 +20,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
       driver: ApolloDriver,
       autoSchemaFile: true,
       playground: true,
+      context: ({ req }) => ({ req }),
     }),
 
     TicketModule,
