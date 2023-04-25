@@ -11,7 +11,7 @@ export class CreateAuthInput {
 export class LoginResponse {
   @Field()
   access_token: string;
-  @Field()
+  @Field(() => Profile)
   profile: Profile;
 }
 
@@ -20,5 +20,5 @@ export class LoginAuthInput {
   @Field()
   username: string;
   @Field()
-  pass: string;
+  password: string;
 }

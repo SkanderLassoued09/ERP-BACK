@@ -1,4 +1,5 @@
 import {
+  CanActivate,
   ExecutionContext,
   Injectable,
   UnauthorizedException,
@@ -13,10 +14,9 @@ export class GqlAuthGuard extends AuthGuard('local') {
   }
   getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context);
-
-    const request = ctx.getContext();
-
+    const request = ctx.getContext().req;
     request.body = ctx.getArgs().loginAuthInput;
+    console.log(request.body, 'request.body');
     if (!request) {
       throw new UnauthorizedException('You are not allowed');
     }

@@ -38,7 +38,6 @@ export class AuthService {
   //   return null;
   // }
 
-  // !To check this function
   async validateUser(username: string, password: string): Promise<any> {
     let user = await this.profileService.findOneForAuth(username);
 
@@ -46,7 +45,7 @@ export class AuthService {
       // throw new HttpException(
       //   `${email} n'existe pas dans notre base de données`,
       // );
-      throw new HttpException('No email found', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('No username found', HttpStatus.UNAUTHORIZED);
     }
     const matchPassword = await bcrypt.compare(password, user.password);
     if (!matchPassword) {

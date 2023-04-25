@@ -1,4 +1,4 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType, Int, Field, ObjectType } from '@nestjs/graphql';
 
 @InputType()
 export class CreateProfileInput {
@@ -22,4 +22,14 @@ export class CreateProfileInput {
   // createdAt: Date;
   // @Field()
   // updatedAt: Date;
+}
+
+@ObjectType()
+export class TokenData {
+  @Field()
+  username: string;
+  @Field()
+  role: string;
+  @Field()
+  email: string;
 }

@@ -1,8 +1,12 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { ProfileService } from './profile.service';
 import { Profile } from './entities/profile.entity';
-import { CreateProfileInput } from './dto/create-profile.input';
+import { CreateProfileInput, TokenData } from './dto/create-profile.input';
 import { UpdateProfileInput } from './dto/update-profile.input';
+import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
+import { UseGuards } from '@nestjs/common';
+import { User as CurrentUser } from 'src/auth/profile.decorator';
+import { profile } from 'console';
 
 @Resolver()
 export class ProfileResolver {
@@ -17,9 +21,13 @@ export class ProfileResolver {
     return data;
   }
 
-  @Query(() => [Profile], { name: 'profile' })
-  findAll() {
-    return this.profileService.findAll();
+  @Query(() => TokenData)
+  @UseGuards(JwtAuthGuard)
+  getTokenData(@CurrentUser() profile: TokenData) {
+    console.log(profile);
+    if (profile !== null) {
+      return profile;
+    }
   }
 
   @Query(() => Profile)
