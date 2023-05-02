@@ -1,6 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
 import * as bcrypt from 'bcrypt';
 export type ProfileDocument = Profile & Document;
@@ -28,7 +28,7 @@ ProfileSchema.pre('save', async function (next) {
   }
 });
 @ObjectType()
-export class Profile {
+export class Profile extends Document {
   @Field()
   username: string;
   @Field()
