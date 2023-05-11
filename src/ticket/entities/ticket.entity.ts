@@ -4,68 +4,34 @@ import mongoose from 'mongoose';
 export type TicketDocument = Ticket & Document;
 
 export const TicketSchema = new mongoose.Schema({
-  adminTitle: String,
-  descAdmin: String,
-  titreTech: String,
-  deschTech: String,
-  cmpstList: Array<String>,
-  location: String,
-  startDate: Date,
-  endDate: Date,
-  dateOfReturn: Date,
-  resTime: Date,
-  DiagTime: Date,
-  repTime: Date,
-  totalTimeTaken: Date,
-  sellingPrice: Number,
-  cmpsData: String,
-  profit: Number,
-  isDep: Boolean,
-  creationStatus: String,
-  statusDiag: String,
-  returnCount: Number,
+  designiation: String,
+  emplacement: String,
+  numSerie: String,
+  numero: String,
+  pdr: String,
+  remarque: String,
+  reparable: String,
+  techNameSug: String,
+  typeClient: String,
+  //! to add time
 });
 
 @ObjectType()
 export class Ticket {
   @Field()
-  adminTitle: string;
+  designiation: string;
   @Field()
-  descAdmin: string;
+  emplacement: string;
   @Field()
-  titreTech: string;
+  numero: string;
   @Field()
-  deschTech: string;
-  @Field(() => [String])
-  cmpstList: string;
+  remarque: string;
   @Field()
-  location: string;
+  reparable: string;
   @Field()
-  startDate: Date;
+  pdr: string;
   @Field()
-  endDate: Date;
+  techNameSug: string;
   @Field()
-  dateOfReturn: Date;
-  @Field()
-  resTime: Date;
-  @Field()
-  DiagTime: Date;
-  @Field()
-  repTime: Date;
-  @Field()
-  totalTimeTaken: Date;
-  @Field()
-  sellingPrice: number;
-  @Field()
-  cmpsData: string;
-  @Field()
-  profit: number;
-  @Field()
-  isDep: boolean;
-  @Field()
-  creationStatus: string;
-  @Field()
-  statusDiag: string;
-  @Field()
-  returnCount: string;
+  typeClient: string;
 }

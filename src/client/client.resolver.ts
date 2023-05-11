@@ -9,8 +9,11 @@ export class ClientResolver {
   constructor(private readonly clientService: ClientService) {}
 
   @Mutation(() => Client)
-  createClient(@Args('createClientInput') createClientInput: CreateClientInput) {
-    return this.clientService.create(createClientInput);
+  createClient(
+    @Args('createClientInput') createClientInput: CreateClientInput,
+    @Args('compClient') type: string,
+  ) {
+    return this.clientService.create(createClientInput, type);
   }
 
   @Query(() => [Client], { name: 'client' })
@@ -24,7 +27,9 @@ export class ClientResolver {
   }
 
   @Mutation(() => Client)
-  updateClient(@Args('updateClientInput') updateClientInput: UpdateClientInput) {
+  updateClient(
+    @Args('updateClientInput') updateClientInput: UpdateClientInput,
+  ) {
     return this.clientService.update(updateClientInput.id, updateClientInput);
   }
 

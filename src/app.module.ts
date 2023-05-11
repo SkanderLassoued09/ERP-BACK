@@ -10,6 +10,9 @@ import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { CategoryModule } from './category/category.module';
+
+import { NotificationHatewayModule } from './notifications/notification.module';
 
 @Module({
   imports: [
@@ -32,6 +35,8 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
     LocationModule,
     IssueModule,
     AuthModule,
+    CategoryModule,
+    NotificationHatewayModule,
   ],
   controllers: [AppController],
   providers: [AppService],

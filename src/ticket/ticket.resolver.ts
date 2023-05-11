@@ -9,8 +9,10 @@ export class TicketResolver {
   constructor(private readonly ticketService: TicketService) {}
 
   @Mutation(() => Ticket)
-  createTicket(@Args('createTicketInput') createTicketInput: CreateTicketInput) {
-    return this.ticketService.create(createTicketInput);
+  async createTicket(
+    @Args('createTicketInput') createTicketInput: CreateTicketInput,
+  ) {
+    return await this.ticketService.create(createTicketInput);
   }
 
   @Query(() => [Ticket], { name: 'ticket' })
@@ -24,7 +26,9 @@ export class TicketResolver {
   }
 
   @Mutation(() => Ticket)
-  updateTicket(@Args('updateTicketInput') updateTicketInput: UpdateTicketInput) {
+  updateTicket(
+    @Args('updateTicketInput') updateTicketInput: UpdateTicketInput,
+  ) {
     return this.ticketService.update(updateTicketInput.id, updateTicketInput);
   }
 

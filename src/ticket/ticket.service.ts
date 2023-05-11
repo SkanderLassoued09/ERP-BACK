@@ -1,11 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTicketInput } from './dto/create-ticket.input';
 import { UpdateTicketInput } from './dto/update-ticket.input';
+import { InjectModel } from '@nestjs/mongoose';
+import { Ticket, TicketDocument } from './entities/ticket.entity';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class TicketService {
-  create(createTicketInput: CreateTicketInput) {
-    return 'This action adds a new ticket';
+  constructor(@InjectModel('Ticket') private ticketModel: Model<Ticket>) {}
+  async create(createTicketInput: CreateTicketInput) {
+    return await new this.ticketModel(createTicketInput).save().then((res) => {
+      console.log(res, 'ticket added');
+      return res;
+    });
   }
 
   findAll() {
