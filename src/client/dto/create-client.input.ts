@@ -2,6 +2,8 @@ import { InputType, Int, Field } from '@nestjs/graphql';
 
 @InputType()
 export class CreateClientInput {
+  @Field({ nullable: true })
+  _id: string;
   @Field()
   firstName: string;
   @Field()

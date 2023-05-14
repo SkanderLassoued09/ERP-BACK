@@ -3,35 +3,54 @@ import mongoose from 'mongoose';
 
 export type TicketDocument = Ticket & Document;
 
-export const TicketSchema = new mongoose.Schema({
-  designiation: String,
-  emplacement: String,
-  numSerie: String,
-  numero: String,
-  pdr: String,
-  remarque: String,
-  reparable: String,
-  techNameSug: String,
-  typeClient: String,
-  //! to add time
-});
+export const TicketSchema = new mongoose.Schema(
+  {
+    _id: String,
+    title: String,
+    designiation: String,
+    emplacement: String,
+    numSerie: String,
+    numero: String,
+    pdr: String,
+    remarque: String,
+    reparable: String,
+    techNameSug: String,
+    typeClient: String,
+    createdBy: String,
+    assignedTo: String,
+    //! to add time
+  },
+  { _id: false, timestamps: true },
+);
 
 @ObjectType()
 export class Ticket {
-  @Field()
+  @Field({ nullable: true })
+  _id: string;
+  @Field({ nullable: true })
+  title: string;
+  @Field({ nullable: true })
   designiation: string;
-  @Field()
+  @Field({ nullable: true })
   emplacement: string;
-  @Field()
+  @Field({ nullable: true })
   numero: string;
-  @Field()
+  @Field({ nullable: true })
   remarque: string;
-  @Field()
+  @Field({ nullable: true })
   reparable: string;
-  @Field()
+  @Field({ nullable: true })
   pdr: string;
-  @Field()
+  @Field({ nullable: true })
   techNameSug: string;
-  @Field()
+  @Field({ nullable: true })
   typeClient: string;
+  @Field({ nullable: true })
+  createdBy: string;
+  @Field({ nullable: true })
+  assignedTo: string;
+  @Field({ nullable: true })
+  createdAt: Date;
+  @Field({ nullable: true })
+  updatedAt: Date;
 }

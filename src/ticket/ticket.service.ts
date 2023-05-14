@@ -8,15 +8,41 @@ import { Model } from 'mongoose';
 @Injectable()
 export class TicketService {
   constructor(@InjectModel('Ticket') private ticketModel: Model<Ticket>) {}
+
+  async generateClientId(): Promise<number> {
+    let index = 0;
+    const lastTicket = await this.ticketModel.findOne(
+      {},
+      {},
+      { sort: { createdAt: -1 } },
+    );
+
+    if (lastTicket) {
+      console.log('is entered');
+      index = +lastTicket._id.substring(1);
+
+      return index + 1;
+    }
+
+    return index;
+  }
+
   async create(createTicketInput: CreateTicketInput) {
+    const index = await this.generateClientId();
+    console.log('index ticket', index);
+    createTicketInput._id = `T${index}`;
+    console.log(createTicketInput._id, 'for saving');
     return await new this.ticketModel(createTicketInput).save().then((res) => {
       console.log(res, 'ticket added');
       return res;
     });
   }
 
-  findAll() {
-    return `This action returns all ticket`;
+  async getTickets() {
+    return await this.ticketModel.find().then((res) => {
+      console.log(res, 'all ticket');
+      return res;
+    });
   }
 
   findOne(id: number) {

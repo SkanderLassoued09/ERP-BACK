@@ -3,6 +3,10 @@ import { ClientService } from './client.service';
 import { Client } from './entities/client.entity';
 import { CreateClientInput } from './dto/create-client.input';
 import { UpdateClientInput } from './dto/update-client.input';
+import { Role, Roles } from 'src/ticket/role-decorator';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
+import { RolesGuard } from 'src/auth/role-guard';
 
 @Resolver(() => Client)
 export class ClientResolver {
@@ -15,10 +19,11 @@ export class ClientResolver {
   ) {
     return this.clientService.create(createClientInput, type);
   }
-
-  @Query(() => [Client], { name: 'client' })
-  findAll() {
-    return this.clientService.findAll();
+  @Roles(Role.ADMIN_MANAGER, Role.ADMIN_TECH)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Query(() => [Client])
+  async getAllClientCompany() {
+    return await this.clientService.getAllClientCompany();
   }
 
   @Query(() => Client, { name: 'client' })
