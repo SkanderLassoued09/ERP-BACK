@@ -26,4 +26,8 @@ export class CreateTicketInput {
   createdBy: string;
   @Field({ nullable: true })
   assignedTo: string;
+  @Field({ nullable: true })
+  status: string;
+  @Field({ nullable: true })
+  isOpenByTech: String;
 }

@@ -22,7 +22,6 @@ export class ClientService {
     if (lastClient) {
       console.log('is entered');
       index = +lastClient._id.substring(1);
-
       return index + 1;
     }
 
@@ -30,10 +29,9 @@ export class ClientService {
   }
 
   async create(createClientInput: CreateClientInput, type: string) {
+    const index = await this.generateClientId();
+    console.log('from function', index);
     if (type === CLIENT_TYPE.CLIENT) {
-      const index = await this.generateClientId();
-      console.log('from function', index);
-
       createClientInput._id = `C${index}`;
 
       createClientInput.type = CLIENT_TYPE.CLIENT;
@@ -47,6 +45,7 @@ export class ClientService {
     }
 
     if (type === CLIENT_TYPE.COMPANY) {
+      createClientInput._id = `C${index}`;
       createClientInput.type = CLIENT_TYPE.COMPANY;
       return await new this.clientModel(createClientInput)
         .save()

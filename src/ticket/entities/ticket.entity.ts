@@ -1,5 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import mongoose from 'mongoose';
+import { STATUS_TICKET } from '../ticket';
 
 export type TicketDocument = Ticket & Document;
 
@@ -18,6 +19,10 @@ export const TicketSchema = new mongoose.Schema(
     typeClient: String,
     createdBy: String,
     assignedTo: String,
+    status: { type: String, required: false, default: STATUS_TICKET.PENDING },
+    isOpenByTech: Boolean,
+    diagnosticTimeByTech: String,
+
     //! to add time
   },
   { _id: false, timestamps: true },
@@ -53,4 +58,10 @@ export class Ticket {
   createdAt: Date;
   @Field({ nullable: true })
   updatedAt: Date;
+  @Field({ nullable: true })
+  status: string;
+  @Field({ nullable: true })
+  isOpenByTech: string;
+  @Field({ nullable: true })
+  diagnosticTimeByTech: String;
 }

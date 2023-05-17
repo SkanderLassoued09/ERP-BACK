@@ -31,11 +31,41 @@ export class TicketResolver {
     return this.ticketService.findOne(id);
   }
 
-  @Mutation(() => Ticket)
+  @Mutation(() => Boolean)
   updateTicket(
     @Args('updateTicketInput') updateTicketInput: UpdateTicketInput,
+    @Args('_id') _id: string,
   ) {
-    return this.ticketService.update(updateTicketInput.id, updateTicketInput);
+    let updateTicket = this.ticketService.updateTicketBytechForDiagnostic(
+      _id,
+      updateTicketInput,
+    );
+
+    if (updateTicket) {
+      return true;
+    } else {
+      false;
+    }
+  }
+
+  @Mutation(() => Boolean)
+  updateStatusToInProgress(@Args('_id') _id: string) {
+    let updateStatus = this.ticketService.updateStatus(_id);
+    if (updateStatus) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @Mutation(() => Boolean)
+  updateStatusToFinish(@Args('_id') _id: string) {
+    let updateStatus = this.ticketService.updateStatusInFinish(_id);
+    if (updateStatus) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @Mutation(() => Ticket)

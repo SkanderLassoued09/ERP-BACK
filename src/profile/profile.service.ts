@@ -4,6 +4,7 @@ import { UpdateProfileInput } from './dto/update-profile.input';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Profile, ProfileDocument } from './entities/profile.entity';
+import { ROLE } from 'src/auth/roles';
 
 @Injectable()
 export class ProfileService {
@@ -40,6 +41,13 @@ export class ProfileService {
         console.log('Err find one auth', err);
         return err;
       });
+  }
+
+  async getAllTech() {
+    return await this.profileModel.find({ role: ROLE.TECH }).then((res) => {
+      console.log(res, 'TECHs');
+      return res;
+    });
   }
 
   update(id: number, updateProfileInput: UpdateProfileInput) {

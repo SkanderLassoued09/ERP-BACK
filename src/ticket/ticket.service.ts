@@ -4,6 +4,7 @@ import { UpdateTicketInput } from './dto/update-ticket.input';
 import { InjectModel } from '@nestjs/mongoose';
 import { Ticket, TicketDocument } from './entities/ticket.entity';
 import { Model } from 'mongoose';
+import { STATUS_TICKET } from './ticket';
 
 @Injectable()
 export class TicketService {
@@ -43,6 +44,44 @@ export class TicketService {
       console.log(res, 'all ticket');
       return res;
     });
+  }
+
+  async updateTicketBytechForDiagnostic(
+    _id: string,
+    updateTicketInput: UpdateTicketInput,
+  ) {
+    return this.ticketModel.updateOne(
+      { _id },
+      {
+        $set: {
+          designiation: updateTicketInput.designiation,
+          emplacement: updateTicketInput.emplacement,
+          numero: updateTicketInput.numero,
+          remarque: updateTicketInput.remarque,
+          reparable: updateTicketInput.reparable,
+          pdr: updateTicketInput.pdr,
+          diagnosticTimeByTech: updateTicketInput.diagnosticTimeByTech,
+        },
+      },
+    );
+  }
+
+  async updateStatus(_id: string) {
+    return await this.ticketModel
+      .updateOne({ _id }, { $set: { status: STATUS_TICKET.IN_PROGRESS } })
+      .then((res) => {
+        console.log(res, 'update status');
+        return res;
+      });
+  }
+
+  async updateStatusInFinish(_id: string) {
+    return await this.ticketModel
+      .updateOne({ _id }, { $set: { status: STATUS_TICKET.FINISHED } })
+      .then((res) => {
+        console.log(res, 'finish status updated');
+        return res;
+      });
   }
 
   findOne(id: number) {

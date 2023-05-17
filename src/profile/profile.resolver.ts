@@ -7,6 +7,9 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
 import { UseGuards } from '@nestjs/common';
 import { User as CurrentUser } from 'src/auth/profile.decorator';
 import { profile } from 'console';
+import { Roles } from 'src/ticket/role-decorator';
+import { RolesGuard } from 'src/auth/role-guard';
+import { Role } from 'src/auth/roles';
 
 @Resolver()
 export class ProfileResolver {
@@ -28,6 +31,12 @@ export class ProfileResolver {
     if (profile !== null) {
       return profile;
     }
+  }
+  @Roles(Role.ADMIN_MANAGER, Role.ADMIN_TECH)
+  @Query(() => [Profile])
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async getAllTech() {
+    return await this.profileService.getAllTech();
   }
 
   @Query(() => Profile)

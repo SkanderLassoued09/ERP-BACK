@@ -2,7 +2,19 @@ import { CreateTicketInput } from './create-ticket.input';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 
 @InputType()
-export class UpdateTicketInput extends PartialType(CreateTicketInput) {
-  @Field(() => Int)
-  id: number;
+export class UpdateTicketInput {
+  @Field({ nullable: true })
+  designiation: string;
+  @Field({ nullable: true })
+  emplacement: string;
+  @Field({ nullable: true })
+  numero: string;
+  @Field({ nullable: true })
+  remarque: string;
+  @Field({ nullable: true })
+  reparable: string;
+  @Field({ nullable: true })
+  pdr: string;
+  @Field({ nullable: true })
+  diagnosticTimeByTech: string;
 }

@@ -8,7 +8,6 @@ import {
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { Server } from 'socket.io';
-import { CreateClientInput } from 'src/client/dto/create-client.input';
 import { CreateTicketInput } from 'src/ticket/dto/create-ticket.input';
 import { TicketService } from 'src/ticket/ticket.service';
 @WebSocketGateway()
@@ -22,16 +21,16 @@ export class NotificationsGateway
     this.logger.log('Notifications');
   }
   handleDisconnect(client: any) {
-    throw new Error('Method not implemented.');
+    this.logger.log('Disconnect', client);
   }
 
   @SubscribeMessage('send-ticket')
   sendTicket(client: Socket, payload: CreateTicketInput) {
     console.log('payload info', payload);
     let notification = {
-      title: payload.title,
+      title: payload.designiation,
       assignedTo: payload.assignedTo,
     };
-    this.server.to(payload.assignedTo).emit('ticket', notification);
+    this.server.emit('ticket', notification);
   }
 }
