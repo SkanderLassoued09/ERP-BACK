@@ -1,5 +1,12 @@
-import { CreateTicketInput } from './create-ticket.input';
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { InputType, Field, Int } from '@nestjs/graphql';
+
+@InputType()
+export class ComposantUpdate {
+  @Field()
+  nameComposant: string;
+  @Field(() => Int)
+  quantity: number;
+}
 
 @InputType()
 export class UpdateTicketInput {
@@ -17,4 +24,6 @@ export class UpdateTicketInput {
   pdr: string;
   @Field({ nullable: true })
   diagnosticTimeByTech: string;
+  @Field(() => [ComposantUpdate], { nullable: true })
+  composant?: ComposantUpdate[];
 }

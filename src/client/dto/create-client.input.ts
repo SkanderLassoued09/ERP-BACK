@@ -4,9 +4,9 @@ import { InputType, Int, Field } from '@nestjs/graphql';
 export class CreateClientInput {
   @Field({ nullable: true })
   _id: string;
-  @Field()
+  @Field({ nullable: true })
   firstName: string;
-  @Field()
+  @Field({ nullable: true })
   lastName: string;
   @Field()
   email: string;
@@ -16,4 +16,32 @@ export class CreateClientInput {
   address: string;
   @Field({ nullable: true })
   type: string;
+  @Field({ nullable: true })
+  companyName: string;
+  @Field({ nullable: true })
+  region: string;
+  @Field({ nullable: true })
+  codePostal: string;
+  @Field({ nullable: true })
+  tva: string;
+  @Field({ nullable: true })
+  etat: string;
+  @Field({ nullable: true })
+  fax: string;
+  @Field({ nullable: true })
+  ibanRib: string;
+  @Field({ nullable: true })
+  swiftBic: string;
+  @Field({ nullable: true })
+  nattestation: string;
+  @Field({ nullable: true })
+  codeFiscal: string;
+  @Field({ nullable: true })
+  conPayment: string;
+  @Field({ nullable: true })
+  website: string;
+  @Field({ nullable: true })
+  techContact: string;
+  @Field({ nullable: true })
+  nRegisterCommerce: string;
 }

@@ -13,9 +13,9 @@ export class IssueResolver {
     return this.issueService.create(createIssueInput);
   }
 
-  @Query(() => [Issue], { name: 'issue' })
-  findAll() {
-    return this.issueService.findAll();
+  @Query(() => [Issue])
+  getAllIssue() {
+    return this.issueService.getAllIssue();
   }
 
   @Query(() => Issue, { name: 'issue' })

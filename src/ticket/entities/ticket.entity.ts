@@ -19,14 +19,32 @@ export const TicketSchema = new mongoose.Schema(
     typeClient: String,
     createdBy: String,
     assignedTo: String,
+    affectedToCompany: String,
+    affectedToClient: String,
     status: { type: String, required: false, default: STATUS_TICKET.PENDING },
     isOpenByTech: Boolean,
     diagnosticTimeByTech: String,
+    priority: String,
+    toMagasin: Boolean,
+    bl: String,
+    bc: String,
+    facture: String,
+    Devis: String,
+    pdfComposant: String,
+    composant: Array,
 
     //! to add time
   },
   { _id: false, timestamps: true },
 );
+
+@ObjectType()
+export class Composants {
+  @Field()
+  nameComposant: string;
+  @Field(() => Int)
+  quantity: number;
+}
 
 @ObjectType()
 export class Ticket {
@@ -63,5 +81,27 @@ export class Ticket {
   @Field({ nullable: true })
   isOpenByTech: string;
   @Field({ nullable: true })
-  diagnosticTimeByTech: String;
+  diagnosticTimeByTech: string;
+  @Field({ nullable: true })
+  priority: string;
+  @Field({ nullable: true })
+  toMagasin: boolean;
+  @Field({ nullable: true })
+  Devis: string;
+  @Field({ nullable: true })
+  facture: string;
+  @Field({ nullable: true })
+  bc: string;
+  @Field({ nullable: true })
+  bl: string;
+  @Field({ nullable: true })
+  titre: string;
+  @Field({ nullable: true })
+  pdfComposant: string;
+  @Field({ nullable: true })
+  affectedToCompany: string;
+  @Field({ nullable: true })
+  affectedToClient: string;
+  @Field(() => [Composants], { nullable: true })
+  composant: Composants[];
 }

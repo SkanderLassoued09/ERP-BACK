@@ -3,19 +3,23 @@ import { LocationService } from './location.service';
 import { Location } from './entities/location.entity';
 import { CreateLocationInput } from './dto/create-location.input';
 import { UpdateLocationInput } from './dto/update-location.input';
+import { RolesGuard } from 'src/auth/role-guard';
+import { UseGuards } from '@nestjs/common';
 
 @Resolver(() => Location)
 export class LocationResolver {
   constructor(private readonly locationService: LocationService) {}
 
   @Mutation(() => Location)
-  createLocation(@Args('createLocationInput') createLocationInput: CreateLocationInput) {
-    return this.locationService.create(createLocationInput);
+  async createLocation(
+    @Args('createLocationInput') createLocationInput: CreateLocationInput,
+  ) {
+    return await this.locationService.create(createLocationInput);
   }
 
-  @Query(() => [Location], { name: 'location' })
-  findAll() {
-    return this.locationService.findAll();
+  @Query(() => [Location])
+  async getAllLocations() {
+    return await this.locationService.getAllLocations();
   }
 
   @Query(() => Location, { name: 'location' })
@@ -24,8 +28,13 @@ export class LocationResolver {
   }
 
   @Mutation(() => Location)
-  updateLocation(@Args('updateLocationInput') updateLocationInput: UpdateLocationInput) {
-    return this.locationService.update(updateLocationInput.id, updateLocationInput);
+  updateLocation(
+    @Args('updateLocationInput') updateLocationInput: UpdateLocationInput,
+  ) {
+    return this.locationService.update(
+      updateLocationInput.id,
+      updateLocationInput,
+    );
   }
 
   @Mutation(() => Location)

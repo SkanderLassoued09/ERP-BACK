@@ -14,7 +14,6 @@ export const ProfileSchema = new mongoose.Schema(
     phone: String,
     role: String,
     email: String,
-    statusProfile: String,
   },
   { timestamps: true },
 );
@@ -43,8 +42,7 @@ export class Profile extends Document {
   role: string;
   @Field()
   email: string;
-  @Field()
-  statusProfile: string;
+
   @Field()
   createdAt: Date;
   @Field()

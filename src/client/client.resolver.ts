@@ -19,11 +19,25 @@ export class ClientResolver {
   ) {
     return this.clientService.create(createClientInput, type);
   }
+  // @Roles(Role.ADMIN_MANAGER, Role.ADMIN_TECH)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Query(() => [Client])
+  // async getAllClientCompany() {
+  //   return await this.clientService.getAllClientCompany();
+  // }
+
   @Roles(Role.ADMIN_MANAGER, Role.ADMIN_TECH)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Query(() => [Client])
-  async getAllClientCompany() {
-    return await this.clientService.getAllClientCompany();
+  async getAllClient() {
+    return await this.clientService.getListOfClient();
+  }
+
+  @Roles(Role.ADMIN_MANAGER, Role.ADMIN_TECH)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Query(() => [Client])
+  async getAllCompany() {
+    return await this.clientService.getListOfCompany();
   }
 
   @Query(() => Client, { name: 'client' })

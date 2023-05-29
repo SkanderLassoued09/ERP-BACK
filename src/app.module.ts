@@ -13,6 +13,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { CategoryModule } from './category/category.module';
 
 import { NotificationHatewayModule } from './notifications/notification.module';
+import { ComposantModule } from './composant/composant.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { NotificationHatewayModule } from './notifications/notification.module';
     AuthModule,
     CategoryModule,
     NotificationHatewayModule,
+    ComposantModule,
   ],
   controllers: [AppController],
   providers: [AppService],

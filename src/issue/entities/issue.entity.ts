@@ -1,7 +1,19 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
+import mongoose from 'mongoose';
+
+export type IssueDocument = Issue & Document;
+export const IssueSchema = new mongoose.Schema(
+  {
+    _id: String,
+    issueName: String,
+  },
+  { _id: false, timestamps: true },
+);
 
 @ObjectType()
 export class Issue {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
+  @Field()
+  _id: string;
+  @Field()
+  issueName: string;
 }

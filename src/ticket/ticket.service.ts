@@ -5,6 +5,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Ticket, TicketDocument } from './entities/ticket.entity';
 import { Model } from 'mongoose';
 import { STATUS_TICKET } from './ticket';
+import { find } from 'rxjs';
+import { ROLE } from 'src/auth/roles';
 
 @Injectable()
 export class TicketService {
@@ -61,6 +63,10 @@ export class TicketService {
           reparable: updateTicketInput.reparable,
           pdr: updateTicketInput.pdr,
           diagnosticTimeByTech: updateTicketInput.diagnosticTimeByTech,
+          composant: updateTicketInput.composant.map((c) => ({
+            nameComposant: c.nameComposant,
+            quantity: c.quantity,
+          })),
         },
       },
     );
@@ -82,6 +88,100 @@ export class TicketService {
         console.log(res, 'finish status updated');
         return res;
       });
+  }
+  // change status selectable for magasin
+  async changeSelectedStatus(_id: string, status: string) {
+    return await this.ticketModel
+      .updateOne(
+        { _id },
+        {
+          $set: {
+            status,
+          },
+        },
+      )
+      .then((res) => {
+        return res;
+      });
+  }
+
+  async isOpen(_id: string) {
+    return await this.ticketModel
+      .updateOne(
+        { _id },
+        {
+          $set: {
+            isOpenByTech: true,
+          },
+        },
+      )
+      .then((res) => {
+        return res;
+      });
+  }
+
+  async toMagasin(_id: string) {
+    return await this.ticketModel
+      .updateOne(
+        { _id },
+        {
+          $set: {
+            toMagasin: true,
+          },
+        },
+      )
+      .then((res) => {
+        return res;
+      });
+  }
+
+  async getTicketByTech(name: string, role: string) {
+    console.log(name, 'name logged in');
+
+    let admin = await this.ticketModel
+      .find({})
+      .sort({ createdAt: -1 })
+      .then((res) => {
+        console.log(res, 'res');
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+
+    let tech = await this.ticketModel
+      .find({ assignedTo: name })
+      .sort({ createdAt: -1 })
+      .then((res) => {
+        console.log(res, 'res');
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+
+    let magasin = await this.ticketModel
+      .find({ toMagasin: true })
+      .sort({ createdAt: -1 })
+      .then((res) => {
+        console.log(res, 'res');
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+
+    if (role === ROLE.ADMIN_MANAGER || role === ROLE.ADMIN_TECH) {
+      return admin;
+    }
+
+    if (role === ROLE.TECH) {
+      return tech;
+    }
+
+    if (role === ROLE.MAGASIN) {
+      return magasin;
+    }
   }
 
   findOne(id: number) {

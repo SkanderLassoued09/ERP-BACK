@@ -7,6 +7,8 @@ import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
 import { Role, Roles } from './role-decorator';
 import { RolesGuard } from 'src/auth/role-guard';
+import { User as CurrentUser } from 'src/auth/profile.decorator';
+import { Profile } from 'src/profile/entities/profile.entity';
 
 @Resolver(() => Ticket)
 export class TicketResolver {
@@ -66,6 +68,37 @@ export class TicketResolver {
     } else {
       return false;
     }
+  }
+
+  @Mutation(() => Boolean)
+  async isOpen(@Args('_id') _id: string) {
+    let isOpen = await this.ticketService.isOpen(_id);
+
+    if (isOpen) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async changeStatus(@Args('_id') _id: string, @Args('status') status: string) {
+    let change = await this.ticketService.changeSelectedStatus(_id, status);
+
+    if (change) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  @Roles(Role.TECH, Role.ADMIN_MANAGER, Role.ADMIN_TECH, Role.MAGASIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Query(() => [Ticket])
+  async getTicketByTech(@CurrentUser() profile: Profile) {
+    return await this.ticketService.getTicketByTech(
+      profile.username,
+      profile.role,
+    );
   }
 
   @Mutation(() => Ticket)

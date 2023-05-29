@@ -63,6 +63,22 @@ export class ClientService {
     });
   }
 
+  async getListOfClient() {
+    return await this.clientModel
+      .find({ type: CLIENT_TYPE.CLIENT })
+      .then((res) => {
+        return res;
+      });
+  }
+
+  async getListOfCompany() {
+    return await this.clientModel
+      .find({ type: CLIENT_TYPE.COMPANY })
+      .then((res) => {
+        return res;
+      });
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} client`;
   }

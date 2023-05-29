@@ -16,8 +16,7 @@ export class CreateProfileInput {
   role: string;
   @Field({ nullable: true })
   email: string;
-  @Field({ nullable: true })
-  statusProfile: string;
+
   // @Field()
   // createdAt: Date;
   // @Field()

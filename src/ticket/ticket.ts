@@ -2,4 +2,12 @@ export const STATUS_TICKET = {
   PENDING: 'PENDING',
   IN_PROGRESS: 'IN_PROGRESS',
   FINISHED: 'FINISHED',
+  IGNORED: 'IGNORED',
+  RETURN: 'RETURN',
+};
+
+export const PRIORITY = {
+  HIGH: 'HIGH',
+  MEDIUM: 'MEDIUM',
+  LOW: 'LOW',
 };

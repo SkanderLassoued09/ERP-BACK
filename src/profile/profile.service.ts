@@ -17,17 +17,21 @@ export class ProfileService {
     return (await this.profileModel.create(createProfileInput))
       .save()
       .then((res) => {
-        console.log('created', res);
         return res;
       })
       .catch((err) => {
-        console.log('Err:', err);
         return err;
       });
   }
 
-  findAll() {
-    return `This action returns all profile`;
+  // for listing profiles
+  async getAllProfile() {
+    return await this.profileModel
+      .find({})
+      .sort({ createdAt: -1 })
+      .then((res) => {
+        return res;
+      });
   }
 
   async findOneForAuth(username: string): Promise<Profile | undefined> {
