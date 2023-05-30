@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { Client } from './entities/client.entity';
 import { Args } from '@nestjs/graphql';
 import { CLIENT_TYPE } from './clientType';
+import { count } from 'console';
 
 @Injectable()
 export class ClientService {
@@ -67,6 +68,7 @@ export class ClientService {
     return await this.clientModel
       .find({ type: CLIENT_TYPE.CLIENT })
       .then((res) => {
+        console.log(res, 'client');
         return res;
       });
   }
@@ -76,6 +78,32 @@ export class ClientService {
       .find({ type: CLIENT_TYPE.COMPANY })
       .then((res) => {
         return res;
+      });
+  }
+
+  async getClientCompanyChart() {
+    return await this.clientModel
+      .aggregate([
+        {
+          $group: {
+            _id: '$type',
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $project: {
+            name: '$_id',
+            value: '$count',
+            _id: 0,
+          },
+        },
+      ])
+      .then((res) => {
+        console.log(res, 'chart');
+        return res;
+      })
+      .catch((err) => {
+        return err;
       });
   }
 

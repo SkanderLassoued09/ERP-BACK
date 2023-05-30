@@ -63,10 +63,6 @@ export class TicketService {
           reparable: updateTicketInput.reparable,
           pdr: updateTicketInput.pdr,
           diagnosticTimeByTech: updateTicketInput.diagnosticTimeByTech,
-          composant: updateTicketInput.composant.map((c) => ({
-            nameComposant: c.nameComposant,
-            quantity: c.quantity,
-          })),
         },
       },
     );

@@ -31,7 +31,6 @@ export const TicketSchema = new mongoose.Schema(
     facture: String,
     Devis: String,
     pdfComposant: String,
-    composant: Array,
 
     //! to add time
   },
@@ -102,6 +101,4 @@ export class Ticket {
   affectedToCompany: string;
   @Field({ nullable: true })
   affectedToClient: string;
-  @Field(() => [Composants], { nullable: true })
-  composant: Composants[];
 }

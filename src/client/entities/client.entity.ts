@@ -38,40 +38,48 @@ export class Client extends Document {
   firstName: string;
   @Field({ nullable: true })
   lastName: string;
-  @Field()
+  @Field({ nullable: true })
   email: string;
-  @Field()
+  @Field({ nullable: true })
   phone: string;
-  @Field()
+  @Field({ nullable: true })
   address: string;
-  @Field()
+  @Field({ nullable: true })
   type: string;
   @Field({ nullable: true })
   companyName: string;
-  @Field()
+  @Field({ nullable: true })
   region: string;
-  @Field()
+  @Field({ nullable: true })
   codePostal: string;
-  @Field()
+  @Field({ nullable: true })
   tva: string;
-  @Field()
+  @Field({ nullable: true })
   etat: string;
-  @Field()
+  @Field({ nullable: true })
   fax: string;
-  @Field()
+  @Field({ nullable: true })
   ibanRib: string;
-  @Field()
+  @Field({ nullable: true })
   swiftBic: string;
-  @Field()
+  @Field({ nullable: true })
   nattestation: string;
-  @Field()
+  @Field({ nullable: true })
   codeFiscal: string;
-  @Field()
+  @Field({ nullable: true })
   conPayment: string;
-  @Field()
+  @Field({ nullable: true })
   website: string;
-  @Field()
+  @Field({ nullable: true })
   techContact: string;
-  @Field()
+  @Field({ nullable: true })
   nRegisterCommerce: string;
+}
+
+@ObjectType()
+export class ChartType {
+  @Field()
+  name: string;
+  @Field()
+  value: number;
 }

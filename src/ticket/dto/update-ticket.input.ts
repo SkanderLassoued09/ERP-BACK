@@ -1,14 +1,6 @@
 import { InputType, Field, Int } from '@nestjs/graphql';
 
 @InputType()
-export class ComposantUpdate {
-  @Field()
-  nameComposant: string;
-  @Field(() => Int)
-  quantity: number;
-}
-
-@InputType()
 export class UpdateTicketInput {
   @Field({ nullable: true })
   designiation: string;
@@ -24,6 +16,4 @@ export class UpdateTicketInput {
   pdr: string;
   @Field({ nullable: true })
   diagnosticTimeByTech: string;
-  @Field(() => [ComposantUpdate], { nullable: true })
-  composant?: ComposantUpdate[];
 }

@@ -10,9 +10,41 @@ export class ComposantService {
   constructor(
     @InjectModel('Composant') private composantModel: Model<Composant>,
   ) {}
+
+  async generateClientId(): Promise<number> {
+    let index = 0;
+    const lastTicket = await this.composantModel.findOne(
+      {},
+      {},
+      { sort: { createdAt: -1 } },
+    );
+
+    if (lastTicket) {
+      console.log('is entered');
+      index = +lastTicket._id.substring(1);
+
+      return index + 1;
+    }
+
+    return index;
+  }
   async create(createComposantInput: CreateComposantInput) {
+    let index = await this.generateClientId();
+    createComposantInput._id = `F${index}`;
     return await new this.composantModel(createComposantInput)
       .save()
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
+
+  async getComposantByTicket(_idTicket: string) {
+    return await this.composantModel
+      .find({ _idTicket })
+      .sort({ createdAt: -1 })
       .then((res) => {
         return res;
       })

@@ -56,6 +56,4 @@ export class CreateTicketInput {
   affectedToCompany: string;
   @Field({ nullable: true })
   affectedToClient: string;
-  @Field(() => [ComposantInput], { nullable: true })
-  composant?: ComposantInput[];
 }
