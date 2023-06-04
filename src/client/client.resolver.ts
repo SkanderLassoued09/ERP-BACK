@@ -26,14 +26,14 @@ export class ClientResolver {
   //   return await this.clientService.getAllClientCompany();
   // }
 
-  @Roles(Role.ADMIN_MANAGER, Role.ADMIN_TECH)
+  // @Roles(Role.ADMIN_MANAGER, Role.ADMIN_TECH,Role.MANAGER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Query(() => [Client])
   async getAllClient() {
     return await this.clientService.getListOfClient();
   }
 
-  @Roles(Role.ADMIN_MANAGER, Role.ADMIN_TECH)
+  // @Roles(Role.ADMIN_MANAGER, Role.ADMIN_TECH)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Query(() => [Client])
   async getAllCompany() {

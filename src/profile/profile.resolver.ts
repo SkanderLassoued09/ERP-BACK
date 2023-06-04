@@ -32,7 +32,7 @@ export class ProfileResolver {
     }
   }
 
-  @Roles(Role.ADMIN_MANAGER, Role.ADMIN_TECH)
+  // @Roles(Role.ADMIN_MANAGER, Role.ADMIN_TECH)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Query(() => [Profile])
   async getAllTech() {

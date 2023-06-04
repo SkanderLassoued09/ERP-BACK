@@ -45,4 +45,9 @@ export class ComposantResolver {
   removeComposant(@Args('id', { type: () => Int }) id: number) {
     return this.composantService.remove(id);
   }
+
+  @Query(() => [Composant])
+  async getAllComposant() {
+    return await this.composantService.getAllCompoasant();
+  }
 }

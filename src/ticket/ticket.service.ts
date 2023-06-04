@@ -52,20 +52,34 @@ export class TicketService {
     _id: string,
     updateTicketInput: UpdateTicketInput,
   ) {
-    return this.ticketModel.updateOne(
-      { _id },
-      {
-        $set: {
-          designiation: updateTicketInput.designiation,
-          emplacement: updateTicketInput.emplacement,
-          numero: updateTicketInput.numero,
-          remarque: updateTicketInput.remarque,
-          reparable: updateTicketInput.reparable,
-          pdr: updateTicketInput.pdr,
-          diagnosticTimeByTech: updateTicketInput.diagnosticTimeByTech,
+    console.log(updateTicketInput, 'data coming');
+    return this.ticketModel
+      .updateOne(
+        { _id },
+        {
+          $set: {
+            emplacement: updateTicketInput.emplacement,
+            numero: updateTicketInput.numero,
+            remarqueTech: updateTicketInput.remarqueTech,
+            reparable: updateTicketInput.reparable,
+            pdr: updateTicketInput.pdr,
+            diagnosticTimeByTech: updateTicketInput.diagnosticTimeByTech,
+            toMagasin: true,
+            composants: updateTicketInput.composants.map((item) => ({
+              nameComposant: item.nameComposant,
+              quantity: item.quantity,
+            })),
+          },
         },
-      },
-    );
+      )
+      .then((res) => {
+        console.log(res, 'ticket updated');
+        return res;
+      })
+      .catch((err) => {
+        console.log(err, 'err update ticket');
+        return err;
+      });
   }
 
   async updateStatus(_id: string) {
@@ -167,7 +181,11 @@ export class TicketService {
         return err;
       });
 
-    if (role === ROLE.ADMIN_MANAGER || role === ROLE.ADMIN_TECH) {
+    if (
+      role === ROLE.ADMIN_MANAGER ||
+      role === ROLE.ADMIN_TECH ||
+      role === ROLE.MANAGER
+    ) {
       return admin;
     }
 
@@ -190,5 +208,16 @@ export class TicketService {
 
   remove(id: number) {
     return `This action removes a #${id} ticket`;
+  }
+
+  async updateGlag() {
+    return await this.ticketModel.updateMany(
+      {},
+      {
+        $set: {
+          isOpenByTech: false,
+        },
+      },
+    );
   }
 }

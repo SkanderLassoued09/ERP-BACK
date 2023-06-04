@@ -2,10 +2,20 @@ import { InputType, Int, Field } from '@nestjs/graphql';
 
 @InputType()
 export class ComposantInput {
-  @Field()
+  @Field({ nullable: true })
+  _id: string;
+  @Field({ nullable: true })
   nameComposant: string;
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   quantity: number;
+  @Field({ nullable: true })
+  sellPrice: string;
+  @Field({ nullable: true })
+  purchasePrice: string;
+  @Field({ nullable: true })
+  statusComposant: string;
+  @Field({ nullable: true })
+  comingDate: string;
 }
 
 @InputType()
@@ -21,7 +31,9 @@ export class CreateTicketInput {
   @Field({ nullable: true })
   numero: string;
   @Field({ nullable: true })
-  remarque: string;
+  remarqueManager: string;
+  @Field({ nullable: true })
+  remarqueTech: string;
   @Field({ nullable: true })
   reparable: string;
   @Field({ nullable: true })
@@ -56,4 +68,6 @@ export class CreateTicketInput {
   affectedToCompany: string;
   @Field({ nullable: true })
   affectedToClient: string;
+  @Field(() => [ComposantInput], { nullable: true })
+  Composants: ComposantInput[];
 }

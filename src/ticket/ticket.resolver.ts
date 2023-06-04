@@ -21,7 +21,7 @@ export class TicketResolver {
     return await this.ticketService.create(createTicketInput);
   }
 
-  @Roles(Role.ADMIN_MANAGER, Role.ADMIN_TECH)
+  // @Roles(Role.ADMIN_MANAGER, Role.ADMIN_TECH)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Query(() => [Ticket])
   async getTickets() {
@@ -44,6 +44,7 @@ export class TicketResolver {
     );
 
     if (updateTicket) {
+      console.log('ticket update');
       return true;
     } else {
       false;
@@ -91,7 +92,7 @@ export class TicketResolver {
       return false;
     }
   }
-  @Roles(Role.TECH, Role.ADMIN_MANAGER, Role.ADMIN_TECH, Role.MAGASIN)
+  // @Roles(Role.TECH, Role.ADMIN_MANAGER, Role.ADMIN_TECH, Role.MAGASIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Query(() => [Ticket])
   async getTicketByTech(@CurrentUser() profile: Profile) {
@@ -102,7 +103,7 @@ export class TicketResolver {
   }
 
   @Mutation(() => Ticket)
-  removeTicket(@Args('id', { type: () => Int }) id: number) {
-    return this.ticketService.remove(id);
+  update() {
+    return this.ticketService.updateGlag();
   }
 }

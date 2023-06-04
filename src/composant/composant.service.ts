@@ -53,6 +53,17 @@ export class ComposantService {
       });
   }
 
+  async getAllCompoasant() {
+    return await this.composantModel
+      .find({})
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
+
   findAll() {
     return `This action returns all composant`;
   }

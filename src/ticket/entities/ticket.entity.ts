@@ -13,7 +13,8 @@ export const TicketSchema = new mongoose.Schema(
     numSerie: String,
     numero: String,
     pdr: String,
-    remarque: String,
+    remarqueManager: String,
+    remarqueTech: String,
     reparable: String,
     techNameSug: String,
     typeClient: String,
@@ -31,6 +32,7 @@ export const TicketSchema = new mongoose.Schema(
     facture: String,
     Devis: String,
     pdfComposant: String,
+    composants: Array,
 
     //! to add time
   },
@@ -40,9 +42,19 @@ export const TicketSchema = new mongoose.Schema(
 @ObjectType()
 export class Composants {
   @Field()
+  _id: string;
+  @Field()
   nameComposant: string;
   @Field(() => Int)
   quantity: number;
+  @Field({ nullable: true })
+  sellPrice: string;
+  @Field({ nullable: true })
+  purchasePrice: string;
+  @Field({ nullable: true })
+  statusComposant: string;
+  @Field({ nullable: true })
+  comingDate: string;
 }
 
 @ObjectType()
@@ -58,7 +70,9 @@ export class Ticket {
   @Field({ nullable: true })
   numero: string;
   @Field({ nullable: true })
-  remarque: string;
+  remarqueManager: string;
+  @Field({ nullable: true })
+  remarqueTech: string;
   @Field({ nullable: true })
   reparable: string;
   @Field({ nullable: true })
@@ -101,4 +115,6 @@ export class Ticket {
   affectedToCompany: string;
   @Field({ nullable: true })
   affectedToClient: string;
+  @Field(() => [Composants], { nullable: true })
+  Composants: Composants[];
 }

@@ -4,8 +4,7 @@ import { InputType, Int, Field } from '@nestjs/graphql';
 export class CreateComposantInput {
   @Field({ nullable: true })
   _id: string;
-  @Field({ nullable: true })
-  _idTicket: string;
+
   @Field({ nullable: true })
   statusMagasin: string;
   @Field({ nullable: true })
