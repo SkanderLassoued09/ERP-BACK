@@ -1,7 +1,10 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { TicketService } from './ticket.service';
 import { Ticket } from './entities/ticket.entity';
-import { CreateTicketInput } from './dto/create-ticket.input';
+import {
+  CreateTicketInput,
+  MagasinUpdateData,
+} from './dto/create-ticket.input';
 import { UpdateTicketInput } from './dto/update-ticket.input';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
@@ -100,6 +103,18 @@ export class TicketResolver {
       profile.username,
       profile.role,
     );
+  }
+
+  @Mutation(() => Boolean)
+  async magasinUpdate(
+    @Args('magasinUpdateData') magasinUpdateData: MagasinUpdateData,
+  ) {
+    let magasin = this.ticketService.updateMagasin(magasinUpdateData);
+    if (magasin) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @Mutation(() => Ticket)

@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTicketInput } from './dto/create-ticket.input';
+import {
+  CreateTicketInput,
+  MagasinUpdateData,
+} from './dto/create-ticket.input';
 import { UpdateTicketInput } from './dto/update-ticket.input';
 import { InjectModel } from '@nestjs/mongoose';
 import { Ticket, TicketDocument } from './entities/ticket.entity';
@@ -78,6 +81,33 @@ export class TicketService {
       })
       .catch((err) => {
         console.log(err, 'err update ticket');
+        return err;
+      });
+  }
+
+  //"tickets": { "$elemMatch": { "_id": 0 } }
+
+  async updateMagasin(magasinUpdateData: MagasinUpdateData) {
+    return await this.ticketModel
+      .updateOne(
+        {
+          _id: magasinUpdateData._id,
+          'composants.nameComposant': magasinUpdateData.nameComposant,
+        },
+        {
+          $set: {
+            'composants.$.sellPrice': magasinUpdateData.sellPrice,
+            'composants.$.purchasePrice': magasinUpdateData.purchasePrice,
+            'composants.$.statusComposant': magasinUpdateData.statusComposant,
+            'composants.$.comingDate': magasinUpdateData.comingDate,
+          },
+        },
+      )
+      .then((res) => {
+        console.log(res, 'update composant');
+        return res;
+      })
+      .catch((err) => {
         return err;
       });
   }

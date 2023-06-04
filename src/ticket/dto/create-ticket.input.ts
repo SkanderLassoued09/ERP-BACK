@@ -71,3 +71,19 @@ export class CreateTicketInput {
   @Field(() => [ComposantInput], { nullable: true })
   Composants: ComposantInput[];
 }
+
+@InputType()
+export class MagasinUpdateData {
+  @Field({ nullable: true })
+  _id: string;
+  @Field({ nullable: true })
+  nameComposant: string;
+  @Field({ nullable: true })
+  sellPrice: string;
+  @Field({ nullable: true })
+  purchasePrice: string;
+  @Field({ nullable: true })
+  statusComposant: string;
+  @Field({ nullable: true })
+  comingDate: string;
+}

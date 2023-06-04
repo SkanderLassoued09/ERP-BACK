@@ -116,5 +116,5 @@ export class Ticket {
   @Field({ nullable: true })
   affectedToClient: string;
   @Field(() => [Composants], { nullable: true })
-  Composants: Composants[];
+  composants: Composants[];
 }
