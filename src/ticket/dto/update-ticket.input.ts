@@ -16,6 +16,8 @@ export class ComposantsUpdate {
   statusComposant: string;
   @Field({ nullable: true })
   comingDate: string;
+  @Field({ nullable: true })
+  isAffected: boolean;
 }
 @InputType()
 export class UpdateTicketInput {
@@ -35,6 +37,35 @@ export class UpdateTicketInput {
   pdr: string;
   @Field({ nullable: true })
   diagnosticTimeByTech: string;
+  @Field({ nullable: true })
+  reparationTimeByTech: string;
   @Field(() => [ComposantsUpdate], { nullable: true })
   composants: ComposantsUpdate[];
+  @Field({ nullable: true })
+  magasinDone: boolean;
+  @Field({ nullable: true })
+  IsFinishedAdmins: boolean;
+
+  // to handle reparable butn
+  @Field({ nullable: true })
+  isReparable: boolean;
+}
+
+@InputType()
+export class UpdateTicketManager {
+  @Field()
+  _id: string;
+  // this is percent
+  @Field()
+  remise: string;
+  @Field()
+  statusFinal: string;
+  @Field()
+  bc: string;
+  @Field()
+  bl: string;
+  @Field()
+  facture: string;
+  @Field()
+  devis: string;
 }

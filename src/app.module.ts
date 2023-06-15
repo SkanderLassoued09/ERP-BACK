@@ -14,6 +14,8 @@ import { CategoryModule } from './category/category.module';
 
 import { NotificationHatewayModule } from './notifications/notification.module';
 import { ComposantModule } from './composant/composant.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -28,6 +30,10 @@ import { ComposantModule } from './composant/composant.module';
       introspection: true,
 
       context: ({ req }) => ({ req }),
+    }),
+
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'pdf'),
     }),
 
     TicketModule,

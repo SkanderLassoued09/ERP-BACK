@@ -23,8 +23,10 @@ export const TicketSchema = new mongoose.Schema(
     affectedToCompany: String,
     affectedToClient: String,
     status: { type: String, required: false, default: STATUS_TICKET.PENDING },
+    finalStatusTicket: { type: String, required: false },
     isOpenByTech: Boolean,
     diagnosticTimeByTech: String,
+    reparationTimeByTech: String,
     priority: String,
     toMagasin: Boolean,
     bl: String,
@@ -33,6 +35,11 @@ export const TicketSchema = new mongoose.Schema(
     Devis: String,
     pdfComposant: String,
     composants: Array,
+    magasinDone: { type: Boolean, required: false, default: false },
+    finalPrice: String,
+    pdfPath: String,
+    IsFinishedAdmins: { type: Boolean, required: false, default: false },
+    isReparable: { type: Boolean, required: false, default: false },
 
     //! to add time
   },
@@ -55,6 +62,8 @@ export class Composants {
   statusComposant: string;
   @Field({ nullable: true })
   comingDate: string;
+  @Field({ nullable: true })
+  isAffected: boolean;
 }
 
 @ObjectType()
@@ -96,6 +105,8 @@ export class Ticket {
   @Field({ nullable: true })
   diagnosticTimeByTech: string;
   @Field({ nullable: true })
+  reparationTimeByTech: string;
+  @Field({ nullable: true })
   priority: string;
   @Field({ nullable: true })
   toMagasin: boolean;
@@ -117,4 +128,23 @@ export class Ticket {
   affectedToClient: string;
   @Field(() => [Composants], { nullable: true })
   composants: Composants[];
+  @Field({ nullable: true })
+  magasinDone: boolean;
+  // admins affected the final price
+  @Field({ nullable: true })
+  finalPrice: string;
+
+  // to chech if the admins finish his task or not
+  @Field({ nullable: true })
+  IsFinishedAdmins: boolean;
+
+  // to handle reparable butn // validated or not // to confirm with client
+  @Field({ nullable: true })
+  isReparable: boolean;
+
+  // for final status ticket after passing all flow
+  @Field({ nullable: true })
+  finalStatusTicket: string;
+  @Field({ nullable: true })
+  pdfPath: string;
 }

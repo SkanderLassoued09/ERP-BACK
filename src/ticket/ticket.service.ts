@@ -3,13 +3,25 @@ import {
   CreateTicketInput,
   MagasinUpdateData,
 } from './dto/create-ticket.input';
-import { UpdateTicketInput } from './dto/update-ticket.input';
+import {
+  UpdateTicketInput,
+  UpdateTicketManager,
+} from './dto/update-ticket.input';
 import { InjectModel } from '@nestjs/mongoose';
-import { Ticket, TicketDocument } from './entities/ticket.entity';
+import { Ticket } from './entities/ticket.entity';
 import { Model } from 'mongoose';
 import { STATUS_TICKET } from './ticket';
-import { find } from 'rxjs';
 import { ROLE } from 'src/auth/roles';
+import * as randomstring from 'randomstring';
+import * as fs from 'fs';
+import { join } from 'path';
+
+function getFileExtension(base64) {
+  const metaData = base64.split(',')[0];
+  const fileType = metaData.split(':')[1].split(';')[0];
+  const extension = fileType.split('/')[1];
+  return extension;
+}
 
 @Injectable()
 export class TicketService {
@@ -38,6 +50,7 @@ export class TicketService {
     console.log('index ticket', index);
     createTicketInput._id = `T${index}`;
     console.log(createTicketInput._id, 'for saving');
+
     return await new this.ticketModel(createTicketInput).save().then((res) => {
       console.log(res, 'ticket added');
       return res;
@@ -100,6 +113,8 @@ export class TicketService {
             'composants.$.purchasePrice': magasinUpdateData.purchasePrice,
             'composants.$.statusComposant': magasinUpdateData.statusComposant,
             'composants.$.comingDate': magasinUpdateData.comingDate,
+            'composants.$.isAffected': true,
+            magasinDone: true,
           },
         },
       )
@@ -249,5 +264,207 @@ export class TicketService {
         },
       },
     );
+  }
+
+  async getTicketMagasinFinie() {
+    return await this.ticketModel
+      .find({ magasinDone: true })
+      .then((res) => {
+        console.log(res);
+        return res;
+      })
+      .catch((err) => {
+        console.log(err);
+        return err;
+      });
+  }
+
+  async affectationFinalPrice(_id: string, finalPrice: string) {
+    return await this.ticketModel
+      .updateOne(
+        { _id },
+        {
+          $set: {
+            finalPrice,
+          },
+        },
+      )
+      .then((res) => {
+        console.log('price affected', res);
+        if (res) {
+          this.adminsPriceFinished(_id);
+        }
+
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
+  async adminsPriceFinished(_id: string) {
+    return await this.ticketModel
+      .updateOne({ _id }, { $set: { IsFinishedAdmins: true } })
+      .then((res) => {
+        console.log(res, 'adminsPrice Value');
+        return res;
+      });
+  }
+
+  async getFinishedTicket() {
+    return await this.ticketModel
+      .find({ IsFinishedAdmins: true })
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
+
+  async updateTicketManager(updateTicketManager: UpdateTicketManager) {
+    const extension = getFileExtension(updateTicketManager.bc);
+    console.log(updateTicketManager.bc, 'bufferr11');
+    const buffer = Buffer.from(updateTicketManager.bc.split(',')[1], 'base64');
+    const randompdfFile = randomstring.generate({
+      length: 12,
+      charset: 'alphabetic',
+    });
+    // console.log(randompdfFile,'random name');
+    // cextensiononsole.log(buffer,'buffer');
+    // console.log(extension,'');
+
+    fs.writeFileSync(
+      join(__dirname, `../../pdf/${randompdfFile}.${extension}`),
+      buffer,
+    );
+
+    // updateTicketManager.bc = `${randompdfFile}.${extension}`;
+
+    let ticketValidated = await this.ticketModel
+      .updateOne(
+        { _id: updateTicketManager._id },
+        {
+          $set: {
+            finalPrice: updateTicketManager.remise,
+            isReparable: updateTicketManager.statusFinal,
+            bc: `${randompdfFile}.${extension}`,
+            bl: updateTicketManager.bl,
+            facture: updateTicketManager.facture,
+            devis: updateTicketManager.devis,
+          },
+        },
+      )
+      .then((res) => {
+        console.log(res, 'res buffer');
+        return res;
+      })
+      .catch((err) => {
+        console.log(err, 'err buffer');
+        return err;
+      });
+
+    let ticketIgnored = this.ticketModel
+      .updateOne(
+        {
+          _id: updateTicketManager._id,
+        },
+        { $set: { finalStatusTicket: STATUS_TICKET.IGNORED } },
+      )
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+
+    if (updateTicketManager.statusFinal) {
+      return ticketValidated;
+    } else {
+      return ticketIgnored;
+    }
+  }
+
+  reopenDiagnostique(_id: string) {
+    return this.ticketModel
+      .updateOne(
+        { _id },
+        {
+          $set: {
+            isOpenByTech: false,
+          },
+        },
+      )
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
+
+  updateRemarqueTechReparation(
+    _id: string,
+    remarqueTech: string,
+    reparationTimeByTech: string,
+  ) {
+    return this.ticketModel
+      .updateOne(
+        { _id },
+        {
+          $set: {
+            remarqueTech,
+            reparationTimeByTech,
+            finalStatusTicket: STATUS_TICKET.FINISHED,
+          },
+        },
+      )
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
+  // to change status ticket to [return]
+  isReturnTicket(_id: string, status: boolean) {
+    let finalStatus;
+    if (status) {
+      finalStatus = STATUS_TICKET.RETURN;
+    } else {
+      finalStatus = STATUS_TICKET.FINISHED;
+    }
+    return this.ticketModel
+      .updateOne(
+        { _id },
+        {
+          $set: {
+            finalStatusTicket: finalStatus,
+          },
+        },
+      )
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
+  // pass ticket in case of no pdr or not reparable
+  toAdminTech(_id: string) {
+    return this.ticketModel
+      .updateOne(
+        { _id },
+        {
+          $set: {
+            magasinDone: true,
+          },
+        },
+      )
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
   }
 }

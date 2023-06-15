@@ -5,7 +5,10 @@ import {
   CreateTicketInput,
   MagasinUpdateData,
 } from './dto/create-ticket.input';
-import { UpdateTicketInput } from './dto/update-ticket.input';
+import {
+  UpdateTicketInput,
+  UpdateTicketManager,
+} from './dto/update-ticket.input';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
 import { Role, Roles } from './role-decorator';
@@ -120,5 +123,92 @@ export class TicketResolver {
   @Mutation(() => Ticket)
   update() {
     return this.ticketService.updateGlag();
+  }
+
+  // @Roles(Role.ADMIN_MANAGER,Role.ADMIN_TECH)
+  // @UseGuards(JwtAuthGuard,RolesGuard)
+  @Query(() => [Ticket])
+  async getTicketMagasinFinie() {
+    return this.ticketService.getTicketMagasinFinie();
+  }
+
+  @Query(() => [Ticket])
+  async getFinishedTicket() {
+    return this.ticketService.getFinishedTicket();
+  }
+
+  @Mutation(() => Boolean)
+  affectationFinalPrice(
+    @Args('_id') _id: string,
+    @Args('finalPrice') finalPrice: string,
+  ) {
+    let affectationPrice = this.ticketService.affectationFinalPrice(
+      _id,
+      finalPrice,
+    );
+    if (affectationPrice) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  @Mutation(() => Boolean)
+  updateTicketManager(
+    @Args('updateTicketManager') updateTicketManager: UpdateTicketManager,
+  ) {
+    let updateManager =
+      this.ticketService.updateTicketManager(updateTicketManager);
+    if (updateManager) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @Mutation(() => Boolean)
+  reopenDiagnostique(@Args('_id') _id: string) {
+    let toggle = this.ticketService.reopenDiagnostique(_id);
+    if (toggle) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @Mutation(() => Boolean)
+  updateRemarqueTechReparation(
+    @Args('_id') _id: string,
+    @Args('remarqueTech') remarqueTech: string,
+    @Args('reparationTimeByTech') reparationTimeByTech: string,
+  ) {
+    let remqrqueFinal = this.ticketService.updateRemarqueTechReparation(
+      _id,
+      remarqueTech,
+      reparationTimeByTech,
+    );
+    if (remqrqueFinal) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  @Mutation(() => Boolean)
+  isReturnTicket(@Args('_id') _id: string, @Args('stauts') status: boolean) {
+    let isReturn = this.ticketService.isReturnTicket(_id, status);
+    if (isReturn) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @Mutation(() => Boolean)
+  toAdminTech(@Args('_id') _id: string) {
+    let toAdminTech = this.ticketService.toAdminTech(_id);
+    if (toAdminTech) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

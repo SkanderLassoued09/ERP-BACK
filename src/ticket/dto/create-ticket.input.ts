@@ -16,6 +16,8 @@ export class ComposantInput {
   statusComposant: string;
   @Field({ nullable: true })
   comingDate: string;
+  @Field({ nullable: true })
+  isAffected: boolean;
 }
 
 @InputType()
@@ -70,6 +72,15 @@ export class CreateTicketInput {
   affectedToClient: string;
   @Field(() => [ComposantInput], { nullable: true })
   Composants: ComposantInput[];
+  @Field({ nullable: true })
+  finalPrice: string;
+  @Field({ nullable: true })
+  IsFinishedAdmins: boolean;
+  // to handle reparable butn
+  @Field({ nullable: true })
+  isReparable: boolean;
+  @Field({ nullable: true })
+  pdfPath: string;
 }
 
 @InputType()
@@ -86,4 +97,6 @@ export class MagasinUpdateData {
   statusComposant: string;
   @Field({ nullable: true })
   comingDate: string;
+  @Field({ nullable: true })
+  pdfPath: string;
 }
