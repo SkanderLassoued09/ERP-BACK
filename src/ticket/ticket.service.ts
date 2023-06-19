@@ -15,6 +15,7 @@ import { ROLE } from 'src/auth/roles';
 import * as randomstring from 'randomstring';
 import * as fs from 'fs';
 import { join } from 'path';
+import { bufferCount } from 'rxjs';
 
 function getFileExtension(base64) {
   const metaData = base64.split(',')[0];
@@ -187,6 +188,9 @@ export class TicketService {
       )
       .then((res) => {
         return res;
+      })
+      .catch((err) => {
+        return err;
       });
   }
 
@@ -329,17 +333,57 @@ export class TicketService {
       length: 12,
       charset: 'alphabetic',
     });
-    // console.log(randompdfFile,'random name');
-    // cextensiononsole.log(buffer,'buffer');
-    // console.log(extension,'');
-
     fs.writeFileSync(
       join(__dirname, `../../pdf/${randompdfFile}.${extension}`),
       buffer,
     );
+    // //---------------------------------------------
+    const extensionBl = getFileExtension(updateTicketManager.bl);
+    console.log(updateTicketManager.bl, 'bl');
+    const bufferBl = Buffer.from(
+      updateTicketManager.bl.split(',')[1],
+      'base64',
+    );
+    const randompdfFileBl = randomstring.generate({
+      length: 12,
+      charset: 'alphabetic',
+    });
+    fs.writeFileSync(
+      join(__dirname, `../../pdf/${randompdfFileBl}.${extensionBl}`),
+      bufferBl,
+    );
 
-    // updateTicketManager.bc = `${randompdfFile}.${extension}`;
+    // //---------------------------------------------
+    const extensionDevis = getFileExtension(updateTicketManager.Devis);
+    console.log(updateTicketManager.Devis);
+    const bufferDevis = Buffer.from(
+      updateTicketManager.Devis.split(',')[1],
+      'base64',
+    );
+    const randompdfFileDevis = randomstring.generate({
+      length: 12,
+      charset: 'alphabetic',
+    });
+    fs.writeFileSync(
+      join(__dirname, `../../pdf/${randompdfFileDevis}.${extensionDevis}`),
+      bufferDevis,
+    );
 
+    // //---------------------------------------------
+    const extensionFacture = getFileExtension(updateTicketManager.facture);
+
+    const bufferFacture = Buffer.from(
+      updateTicketManager.facture.split(',')[1],
+      'base64',
+    );
+    const randompdfFileFacture = randomstring.generate({
+      length: 12,
+      charset: 'alphabetic',
+    });
+    fs.writeFileSync(
+      join(__dirname, `../../pdf/${randompdfFileFacture}.${extensionFacture}`),
+      bufferFacture,
+    );
     let ticketValidated = await this.ticketModel
       .updateOne(
         { _id: updateTicketManager._id },
@@ -348,9 +392,9 @@ export class TicketService {
             finalPrice: updateTicketManager.remise,
             isReparable: updateTicketManager.statusFinal,
             bc: `${randompdfFile}.${extension}`,
-            bl: updateTicketManager.bl,
-            facture: updateTicketManager.facture,
-            devis: updateTicketManager.devis,
+            bl: `${randompdfFileBl}.${extensionBl}`,
+            facture: `${randompdfFileFacture}.${extensionFacture}`,
+            Devis: `${randompdfFileDevis}.${extensionDevis}`,
           },
         },
       )
@@ -451,19 +495,22 @@ export class TicketService {
   }
   // pass ticket in case of no pdr or not reparable
   toAdminTech(_id: string) {
+    console.log(_id, '_id to magasin');
     return this.ticketModel
       .updateOne(
         { _id },
         {
           $set: {
-            magasinDone: true,
+            toMagasin: false,
           },
         },
       )
       .then((res) => {
+        console.log('to magasin is fired', res);
         return res;
       })
       .catch((err) => {
+        console.log('to magasin is fired error', err);
         return err;
       });
   }

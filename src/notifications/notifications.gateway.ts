@@ -28,7 +28,7 @@ export class NotificationsGateway
 
   @SubscribeMessage('send-ticket')
   sendTicket(client: Socket, payload: CreateTicketInput) {
-    console.log(client.id, 'id');
+    // console.log(client.id, 'id');
     console.log('payload info', payload);
     let notification = {
       title: payload.designiation,
@@ -38,13 +38,13 @@ export class NotificationsGateway
       .create(payload)
       .then((res) => {
         console.log(res, 'ticket added');
+        this.server.emit('ticket', notification);
         return res;
       })
       .catch((err) => {
         console.log(err, 'err add ticket');
         return err;
       });
-    this.server.emit('ticket', notification);
   }
 
   // to send data to magasin
@@ -57,7 +57,14 @@ export class NotificationsGateway
       assignedTo: payload.assignedTo,
       role: payload.role,
     };
-    await this.ticketService.toMagasin(payload._id);
-    this.server.emit('magasin', notification);
+    await this.ticketService
+      .toMagasin(payload._id)
+      .then((res) => {
+        this.server.emit('magasin', notification);
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
   }
 }

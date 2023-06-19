@@ -67,5 +67,5 @@ export class UpdateTicketManager {
   @Field()
   facture: string;
   @Field()
-  devis: string;
+  Devis: string;
 }
