@@ -75,6 +75,8 @@ export class CreateTicketInput {
   @Field({ nullable: true })
   finalPrice: string;
   @Field({ nullable: true })
+  image: string;
+  @Field({ nullable: true })
   IsFinishedAdmins: boolean;
   // to handle reparable butn
   @Field({ nullable: true })

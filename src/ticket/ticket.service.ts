@@ -15,7 +15,6 @@ import { ROLE } from 'src/auth/roles';
 import * as randomstring from 'randomstring';
 import * as fs from 'fs';
 import { join } from 'path';
-import { bufferCount } from 'rxjs';
 
 function getFileExtension(base64) {
   const metaData = base64.split(',')[0];
@@ -47,11 +46,23 @@ export class TicketService {
   }
 
   async create(createTicketInput: CreateTicketInput) {
+    const extension = getFileExtension(createTicketInput.image);
+    console.log(createTicketInput.image, 'bufferr11');
+    const buffer = Buffer.from(createTicketInput.image.split(',')[1], 'base64');
+    const randompdfFile = randomstring.generate({
+      length: 12,
+      charset: 'alphabetic',
+    });
+    fs.writeFileSync(
+      join(__dirname, `../../pdf/${randompdfFile}.${extension}`),
+      buffer,
+    );
     const index = await this.generateClientId();
     console.log('index ticket', index);
     createTicketInput._id = `T${index}`;
     console.log(createTicketInput._id, 'for saving');
-
+    createTicketInput.image = `${randompdfFile}.${extension}`;
+    console.log(createTicketInput.image, 'image');
     return await new this.ticketModel(createTicketInput).save().then((res) => {
       console.log(res, 'ticket added');
       return res;

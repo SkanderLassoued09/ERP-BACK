@@ -55,7 +55,6 @@ export class UpdateTicketInput {
 export class UpdateTicketManager {
   @Field()
   _id: string;
-  // this is percent
   @Field()
   remise: string;
   @Field()

@@ -33,6 +33,7 @@ export const TicketSchema = new mongoose.Schema(
     bc: String,
     facture: String,
     Devis: String,
+    image: String,
     pdfComposant: String,
     composants: Array,
     magasinDone: { type: Boolean, required: false, default: false },
@@ -102,6 +103,8 @@ export class Ticket {
   status: string;
   @Field({ nullable: true })
   isOpenByTech: string;
+  @Field({ nullable: true })
+  image: string;
   @Field({ nullable: true })
   diagnosticTimeByTech: string;
   @Field({ nullable: true })
