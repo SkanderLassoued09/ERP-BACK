@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { ProfileService } from './profile.service';
-import { Profile } from './entities/profile.entity';
+import { Profile, TechTickets } from './entities/profile.entity';
 import { CreateProfileInput, TokenData } from './dto/create-profile.input';
 import { UpdateProfileInput } from './dto/update-profile.input';
 import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
@@ -8,7 +8,6 @@ import { UseGuards } from '@nestjs/common';
 import { User as CurrentUser } from 'src/auth/profile.decorator';
 import { Role, Roles } from 'src/ticket/role-decorator';
 import { RolesGuard } from 'src/auth/role-guard';
-// import { Role } from 'src/auth/roles';
 
 @Resolver()
 export class ProfileResolver {
@@ -34,9 +33,15 @@ export class ProfileResolver {
 
   // @Roles(Role.ADMIN_MANAGER, Role.ADMIN_TECH)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Query(() => [Profile])
+  @Query(() => [TechTickets])
   async getAllTech() {
     return await this.profileService.getAllTech();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Query(() => [TechTickets])
+  async getAllAdmins() {
+    return await this.profileService.getAllAdmins();
   }
 
   @Roles(Role.ADMIN_MANAGER, Role.ADMIN_TECH)

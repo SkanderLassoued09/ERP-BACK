@@ -33,6 +33,11 @@ export class TicketResolver {
   async getTickets() {
     return await this.ticketService.getTickets();
   }
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Query(() => [Ticket])
+  async getTicketForCoordinator() {
+    return await this.ticketService.getTicketForCoordinator();
+  }
 
   @Query(() => Ticket, { name: 'ticket' })
   findOne(@Args('id', { type: () => Int }) id: number) {
@@ -120,6 +125,16 @@ export class TicketResolver {
     }
   }
 
+  @Mutation(() => Boolean)
+  async makeTicketAvailableForAdmin(@Args('_id') _id: string) {
+    let magasin = this.ticketService.makeTicketAvailableForAdmin(_id);
+    if (magasin) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @Mutation(() => Ticket)
   update() {
     return this.ticketService.updateGlag();
@@ -166,9 +181,28 @@ export class TicketResolver {
   }
 
   @Mutation(() => Boolean)
+  setIsReparable(@Args('_id') _id: string) {
+    let update = this.ticketService.setIsReparable(_id);
+    if (update) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @Mutation(() => Boolean)
   reopenDiagnostique(@Args('_id') _id: string) {
     let toggle = this.ticketService.reopenDiagnostique(_id);
     if (toggle) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  @Mutation(() => Boolean)
+  checkedByCoordinator(@Args('_id') _id: string) {
+    let coo = this.ticketService.checkedByCoordinator(_id);
+    if (coo) {
       return true;
     } else {
       return false;
@@ -206,6 +240,19 @@ export class TicketResolver {
   toAdminTech(@Args('_id') _id: string) {
     let toAdminTech = this.ticketService.toAdminTech(_id);
     if (toAdminTech) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @Mutation(() => Boolean)
+  affectTechToTechByCoordinator(
+    @Args('_id') _id: string,
+    @Args('sentTo') sentTo: string,
+  ) {
+    let affect = this.ticketService.affectTechToTechByCoordinator(_id, sentTo);
+    if (affect) {
       return true;
     } else {
       return false;

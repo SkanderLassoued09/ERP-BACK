@@ -63,10 +63,27 @@ export class TicketService {
     console.log(createTicketInput._id, 'for saving');
     createTicketInput.image = `${randompdfFile}.${extension}`;
     console.log(createTicketInput.image, 'image');
-    return await new this.ticketModel(createTicketInput).save().then((res) => {
-      console.log(res, 'ticket added');
-      return res;
-    });
+    return await new this.ticketModel(createTicketInput)
+      .save()
+      .then((res) => {
+        console.log(res, 'ticket added');
+        return res;
+      })
+      .catch((err) => {
+        console.log(err, 'ticket error');
+        return err;
+      });
+  }
+
+  async checkedByCoordinator(_id: string) {
+    return await this.ticketModel
+      .updateOne({ _id }, { $set: { toCoordinator: true } })
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
   }
 
   async getTickets() {
@@ -76,6 +93,16 @@ export class TicketService {
     });
   }
 
+  async getTicketForCoordinator() {
+    return await this.ticketModel
+      .find({ toCoordinator: false })
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
   async updateTicketBytechForDiagnostic(
     _id: string,
     updateTicketInput: UpdateTicketInput,
@@ -121,12 +148,12 @@ export class TicketService {
         },
         {
           $set: {
+            toCoordinator: false,
             'composants.$.sellPrice': magasinUpdateData.sellPrice,
             'composants.$.purchasePrice': magasinUpdateData.purchasePrice,
             'composants.$.statusComposant': magasinUpdateData.statusComposant,
             'composants.$.comingDate': magasinUpdateData.comingDate,
             'composants.$.isAffected': true,
-            magasinDone: true,
           },
         },
       )
@@ -139,6 +166,23 @@ export class TicketService {
       });
   }
 
+  async makeTicketAvailableForAdmin(_id: string) {
+    return await this.ticketModel
+      .updateOne(
+        { _id },
+        {
+          $set: {
+            magasinDone: true,
+          },
+        },
+      )
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
   async updateStatus(_id: string) {
     return await this.ticketModel
       .updateOne({ _id }, { $set: { status: STATUS_TICKET.IN_PROGRESS } })
@@ -401,11 +445,12 @@ export class TicketService {
         {
           $set: {
             finalPrice: updateTicketManager.remise,
-            isReparable: updateTicketManager.statusFinal,
+            // isReparable: updateTicketManager.statusFinal,
             bc: `${randompdfFile}.${extension}`,
             bl: `${randompdfFileBl}.${extensionBl}`,
             facture: `${randompdfFileFacture}.${extensionFacture}`,
             Devis: `${randompdfFileDevis}.${extensionDevis}`,
+            toCoordinator: false,
           },
         },
       )
@@ -437,6 +482,17 @@ export class TicketService {
     } else {
       return ticketIgnored;
     }
+  }
+
+  async setIsReparable(_id) {
+    return await this.ticketModel
+      .updateOne({ _id }, { $set: { isReparable: true } })
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
   }
 
   reopenDiagnostique(_id: string) {
@@ -522,6 +578,25 @@ export class TicketService {
       })
       .catch((err) => {
         console.log('to magasin is fired error', err);
+        return err;
+      });
+  }
+
+  async affectTechToTechByCoordinator(_id: string, sentTo: string) {
+    return await this.ticketModel
+      .updateOne(
+        { _id },
+        {
+          $set: {
+            assignedTo: sentTo,
+            toCoordinator: true,
+          },
+        },
+      )
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
         return err;
       });
   }

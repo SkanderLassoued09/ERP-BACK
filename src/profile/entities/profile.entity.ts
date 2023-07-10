@@ -48,3 +48,13 @@ export class Profile extends Document {
   @Field()
   updatedAt: Date;
 }
+
+@ObjectType()
+export class TechTickets {
+  @Field()
+  _id: string;
+  @Field()
+  username: string;
+  @Field(() => Int)
+  ticketCount: number;
+}

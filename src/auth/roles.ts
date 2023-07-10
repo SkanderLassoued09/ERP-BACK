@@ -4,6 +4,7 @@ export const ROLE = {
   MANAGER: 'MANAGER',
   TECH: 'TECH',
   MAGASIN: 'MAGASIN',
+  COORDINATOR: 'COORDINATOR',
 };
 
 export enum Role {
@@ -12,6 +13,7 @@ export enum Role {
   MANAGER = 'MANAGER',
   TECH = 'TECH',
   MAGASIN = 'MAGASIN',
+  COORDINATOR = 'COORDINATOR',
 }
 
 export const CLIENT_TYPE = {

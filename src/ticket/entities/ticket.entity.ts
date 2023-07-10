@@ -1,6 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import mongoose from 'mongoose';
-import { STATUS_TICKET } from '../ticket';
+import { STATUS_COORDINATOR, STATUS_TICKET } from '../ticket';
 
 export type TicketDocument = Ticket & Document;
 
@@ -16,30 +16,35 @@ export const TicketSchema = new mongoose.Schema(
     remarqueManager: String,
     remarqueTech: String,
     reparable: String,
-    techNameSug: String,
+
     typeClient: String,
     createdBy: String,
     assignedTo: String,
     affectedToCompany: String,
     affectedToClient: String,
     status: { type: String, required: false, default: STATUS_TICKET.PENDING },
+
     finalStatusTicket: { type: String, required: false },
-    isOpenByTech: Boolean,
+    isOpenByTech: { type: Boolean, required: false, default: false },
     diagnosticTimeByTech: String,
     reparationTimeByTech: String,
     priority: String,
     toMagasin: Boolean,
+
     bl: String,
     bc: String,
     facture: String,
     Devis: String,
     image: String,
-    pdfComposant: String,
+
     composants: Array,
     magasinDone: { type: Boolean, required: false, default: false },
     finalPrice: String,
     pdfPath: String,
     IsFinishedAdmins: { type: Boolean, required: false, default: false },
+
+    // ticket sent to coordinator but not consulted => false = not checked by coordinbator | true = ticket checked by coordinator
+    toCoordinator: { type: Boolean, required: false, default: false },
     isReparable: { type: Boolean, required: false, default: false },
 
     //! to add time
@@ -102,7 +107,7 @@ export class Ticket {
   @Field({ nullable: true })
   status: string;
   @Field({ nullable: true })
-  isOpenByTech: string;
+  isOpenByTech: boolean;
   @Field({ nullable: true })
   image: string;
   @Field({ nullable: true })
@@ -113,6 +118,8 @@ export class Ticket {
   priority: string;
   @Field({ nullable: true })
   toMagasin: boolean;
+  @Field({ nullable: true })
+  toCoordinator: boolean;
   @Field({ nullable: true })
   Devis: string;
   @Field({ nullable: true })

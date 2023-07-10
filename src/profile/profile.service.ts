@@ -48,10 +48,45 @@ export class ProfileService {
   }
 
   async getAllTech() {
-    return await this.profileModel.find({ role: ROLE.TECH }).then((res) => {
-      console.log(res, 'TECHs');
-      return res;
-    });
+    return await this.profileModel
+      .aggregate([
+        { $match: { role: ROLE.TECH } },
+        {
+          $lookup: {
+            from: 'tickets',
+            localField: 'username',
+            foreignField: 'assignedTo',
+            as: 'ticketByTech',
+          },
+        },
+        // { $unwind: '$ticketByTech' },
+        {
+          $project: {
+            _id: '$_id',
+            username: '$username',
+            ticketCount: { $size: '$ticketByTech' },
+          },
+        },
+      ])
+      .then((res) => {
+        console.log('join ticket tech', res);
+        return res;
+      })
+      .catch((err) => {
+        console.log(err, 'err');
+        return err;
+      });
+  }
+
+  async getAllAdmins() {
+    return await this.profileModel
+      .find({ role: { $in: [ROLE.ADMIN_MANAGER, ROLE.ADMIN_TECH] } })
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
   }
 
   update(id: number, updateProfileInput: UpdateProfileInput) {

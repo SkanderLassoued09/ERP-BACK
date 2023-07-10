@@ -27,24 +27,15 @@ export class NotificationsGateway
   }
 
   @SubscribeMessage('send-ticket')
-  sendTicket(client: Socket, payload: CreateTicketInput) {
-    // console.log(client.id, 'id');
-    console.log('payload info', payload);
+  sendTicket(client: Socket, payload: any) {
+    console.log(payload, 'Test purpuse');
+
     let notification = {
       title: payload.designiation,
       assignedTo: payload.assignedTo,
     };
-    this.ticketService
-      .create(payload)
-      .then((res) => {
-        console.log(res, 'ticket added');
-        this.server.emit('ticket', notification);
-        return res;
-      })
-      .catch((err) => {
-        console.log(err, 'err add ticket');
-        return err;
-      });
+    this.ticketService.create(payload);
+    this.server.emit('ticket', notification);
   }
 
   // to send data to magasin
@@ -66,5 +57,17 @@ export class NotificationsGateway
       .catch((err) => {
         return err;
       });
+  }
+
+  @SubscribeMessage('send-to-tech')
+  async sendTicketToTechByCoordinator(client: Socket, payload: any) {
+    console.log(payload, 'by Coo');
+    if (payload) {
+      this.ticketService.affectTechToTechByCoordinator(
+        payload._id,
+        payload.sentTo,
+      );
+      client.emit('tech-recieve-coordinator', payload);
+    }
   }
 }
