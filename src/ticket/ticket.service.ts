@@ -46,6 +46,7 @@ export class TicketService {
   }
 
   async create(createTicketInput: CreateTicketInput) {
+    console.log(createTicketInput, 'add service');
     const extension = getFileExtension(createTicketInput.image);
     console.log(createTicketInput.image, 'bufferr11');
     const buffer = Buffer.from(createTicketInput.image.split(',')[1], 'base64');
@@ -95,7 +96,7 @@ export class TicketService {
 
   async getTicketForCoordinator() {
     return await this.ticketModel
-      .find({ toCoordinator: false })
+      .find() // { toCoordinator: false }
       .then((res) => {
         return res;
       })
@@ -119,6 +120,8 @@ export class TicketService {
             reparable: updateTicketInput.reparable,
             pdr: updateTicketInput.pdr,
             diagnosticTimeByTech: updateTicketInput.diagnosticTimeByTech,
+            issue: updateTicketInput.issue,
+
             toMagasin: true,
             composants: updateTicketInput.composants.map((item) => ({
               nameComposant: item.nameComposant,
@@ -167,6 +170,7 @@ export class TicketService {
   }
 
   async makeTicketAvailableForAdmin(_id: string) {
+    console.log(_id, 'id makeTicketAvailableForAdmin ');
     return await this.ticketModel
       .updateOne(
         { _id },
@@ -177,9 +181,11 @@ export class TicketService {
         },
       )
       .then((res) => {
+        console.log(res, 'res');
         return res;
       })
       .catch((err) => {
+        console.log(err, 'err');
         return err;
       });
   }
@@ -599,5 +605,124 @@ export class TicketService {
       .catch((err) => {
         return err;
       });
+  }
+
+  async discount(_id: string, role: string) {
+    if (role === ROLE.MANAGER) {
+      return this.ticketModel
+        .updateOne(
+          { _id },
+          {
+            $set: {
+              openDiscount: ROLE.ADMIN_TECH,
+            },
+          },
+        )
+        .then((res) => {
+          return res;
+        })
+        .catch((err) => {
+          return err;
+        });
+    } else if (role === ROLE.ADMIN_TECH) {
+      return this.ticketModel
+        .updateOne(
+          { _id },
+          {
+            $set: {
+              openDiscount: ROLE.ADMIN_MANAGER,
+            },
+          },
+        )
+        .then((res) => {
+          return res;
+        })
+        .catch((err) => {
+          return err;
+        });
+    } else {
+      return this.ticketModel
+        .updateOne(
+          { _id },
+          {
+            $set: {
+              openDiscount: 'TO_UPDATE_PRICE',
+            },
+          },
+        )
+        .then((res) => {
+          return res;
+        })
+        .catch((err) => {
+          return err;
+        });
+    }
+  }
+
+  getIssuesChart() {
+    return this.ticketModel
+      .aggregate([
+        {
+          $group: {
+            _id: '$issue',
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $project: {
+            name: '$_id',
+            value: '$count',
+            _id: 0,
+          },
+        },
+      ])
+      .then((res) => {
+        console.log(res, 'res');
+        return res;
+      })
+      .catch((err) => {
+        console.log(err, 'err');
+        return err;
+      });
+  }
+
+  getTotality() {
+    let totalityTypes = this.ticketModel
+      .aggregate([
+        {
+          $group: {
+            _id: '$status',
+            count: { $sum: 1 },
+          },
+        },
+
+        {
+          $project: {
+            name: '$_id',
+            value: '$count',
+            _id: 0,
+          },
+        },
+      ])
+      .then((res) => {
+        console.log(res, 'totality');
+        return res;
+      })
+      .catch((err) => {
+        console.log(err, 'err');
+        return err;
+      });
+
+    let totalTicketCount = this.ticketModel
+      .find()
+      .count()
+      .then((res) => {
+        console.log(res, 'count');
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+    return Promise.all([{ totality: totalityTypes, count: totalTicketCount }]); // hh
   }
 }

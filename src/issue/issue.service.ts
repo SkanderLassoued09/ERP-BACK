@@ -49,6 +49,33 @@ export class IssueService {
       });
   }
 
+  getIssuesChart() {
+    return this.issueModel
+      .aggregate([
+        {
+          $group: {
+            _id: '$issueName',
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $project: {
+            name: '$_id',
+            value: '$count',
+            _id: 0,
+          },
+        },
+      ])
+      .then((res) => {
+        console.log(res, 'res');
+        return res;
+      })
+      .catch((err) => {
+        console.log(err, 'err');
+        return err;
+      });
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} issue`;
   }

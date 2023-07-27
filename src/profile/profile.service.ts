@@ -89,6 +89,79 @@ export class ProfileService {
       });
   }
 
+  //! Dashbord services
+
+  // client by region
+  getClientByRegion() {
+    return this.profileModel
+      .aggregate([
+        {
+          $group: {
+            _id: '$role',
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $project: {
+            name: '$_id',
+            value: '$count',
+            _id: 0,
+          },
+        },
+      ])
+      .then((res) => {
+        console.log(res, 'res');
+        return res;
+      })
+      .catch((err) => {
+        console.log(err, 'err');
+        return err;
+      });
+  }
+
+  getTicketByProfile() {
+    return this.profileModel
+      .aggregate([
+        {
+          $lookup: {
+            from: 'tickets',
+            localField: 'username',
+            foreignField: 'assignedTo',
+            as: 'ticketByProfile',
+          },
+        },
+        { $unwind: '$ticketByProfile' },
+        {
+          $group: {
+            _id: '$username',
+            diagnostiqueTime: {
+              $push: '$ticketByProfile.diagnosticTimeByTech',
+            },
+            reparationTime: {
+              $push: '$ticketByProfile.reparationTimeByTech',
+            },
+          },
+        },
+
+        {
+          $project: {
+            _id: 0,
+            techName: '$_id',
+            totalDiag: '$diagnostiqueTime',
+            totalRep: '$reparationTime',
+            moyDiag: '',
+            moyRep: '',
+          },
+        },
+      ])
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
+
   update(id: number, updateProfileInput: UpdateProfileInput) {
     return `This action updates a #${id} profile`;
   }

@@ -7,6 +7,7 @@ import { Role, Roles } from 'src/ticket/role-decorator';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
 import { RolesGuard } from 'src/auth/role-guard';
+import { ClientByRegionChart } from 'src/profile/entities/profile.entity';
 
 @Resolver(() => Client)
 export class ClientResolver {
@@ -38,6 +39,11 @@ export class ClientResolver {
   @Query(() => [Client])
   async getAllCompany() {
     return await this.clientService.getListOfCompany();
+  }
+
+  @Query(() => [ClientByRegionChart])
+  async getClientByRegion() {
+    return await this.clientService.getClientByRegion();
   }
 
   @Query(() => [ChartType])

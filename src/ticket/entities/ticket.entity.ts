@@ -1,6 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import mongoose from 'mongoose';
-import { STATUS_COORDINATOR, STATUS_TICKET } from '../ticket';
+import { OPEN_DISCOUNT, STATUS_COORDINATOR, STATUS_TICKET } from '../ticket';
 
 export type TicketDocument = Ticket & Document;
 
@@ -22,6 +22,7 @@ export const TicketSchema = new mongoose.Schema(
     assignedTo: String,
     affectedToCompany: String,
     affectedToClient: String,
+    issue: String,
     status: { type: String, required: false, default: STATUS_TICKET.PENDING },
 
     finalStatusTicket: { type: String, required: false },
@@ -46,6 +47,12 @@ export const TicketSchema = new mongoose.Schema(
     // ticket sent to coordinator but not consulted => false = not checked by coordinbator | true = ticket checked by coordinator
     toCoordinator: { type: Boolean, required: false, default: false },
     isReparable: { type: Boolean, required: false, default: false },
+
+    // openDiscount For differnnt profile
+    openDiscount: {
+      type: String,
+      required: false,
+    },
 
     //! to add time
   },
@@ -90,6 +97,8 @@ export class Ticket {
   remarqueTech: string;
   @Field({ nullable: true })
   reparable: string;
+  @Field({ nullable: true })
+  issue: string;
   @Field({ nullable: true })
   pdr: string;
   @Field({ nullable: true })
@@ -143,6 +152,8 @@ export class Ticket {
   // admins affected the final price
   @Field({ nullable: true })
   finalPrice: string;
+  @Field({ nullable: true })
+  openDiscount: string;
 
   // to chech if the admins finish his task or not
   @Field({ nullable: true })
@@ -157,4 +168,19 @@ export class Ticket {
   finalStatusTicket: string;
   @Field({ nullable: true })
   pdfPath: string;
+}
+
+@ObjectType()
+export class TotalityType {
+  @Field()
+  name: string;
+  @Field()
+  value: string;
+}
+@ObjectType()
+export class Totality {
+  @Field(() => [TotalityType])
+  totality: TotalityType[];
+  @Field()
+  count: number;
 }

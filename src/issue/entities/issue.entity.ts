@@ -17,3 +17,10 @@ export class Issue {
   @Field()
   issueName: string;
 }
+@ObjectType()
+export class IssueChart {
+  @Field()
+  name: string;
+  @Field()
+  value: string;
+}

@@ -36,6 +36,8 @@ export class UpdateTicketInput {
   @Field({ nullable: true })
   pdr: string;
   @Field({ nullable: true })
+  issue: string;
+  @Field({ nullable: true })
   diagnosticTimeByTech: string;
   @Field({ nullable: true })
   reparationTimeByTech: string;
@@ -45,10 +47,11 @@ export class UpdateTicketInput {
   magasinDone: boolean;
   @Field({ nullable: true })
   IsFinishedAdmins: boolean;
-
   // to handle reparable butn
   @Field({ nullable: true })
   isReparable: boolean;
+  @Field({ nullable: true })
+  openDiscount: string;
 }
 
 @InputType()

@@ -63,11 +63,15 @@ export class NotificationsGateway
   async sendTicketToTechByCoordinator(client: Socket, payload: any) {
     console.log(payload, 'by Coo');
     if (payload) {
-      this.ticketService.affectTechToTechByCoordinator(
-        payload._id,
-        payload.sentTo,
-      );
-      client.emit('tech-recieve-coordinator', payload);
+      this.ticketService
+        .affectTechToTechByCoordinator(payload._id, payload.sentTo)
+        .then((res) => {
+          this.server.emit('tech-recieve-coordinator', payload);
+          return res;
+        })
+        .catch((err) => {
+          return err;
+        });
     }
   }
 }

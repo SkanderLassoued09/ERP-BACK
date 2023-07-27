@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { TicketService } from './ticket.service';
-import { Ticket } from './entities/ticket.entity';
+import { Ticket, Totality } from './entities/ticket.entity';
 import {
   CreateTicketInput,
   MagasinUpdateData,
@@ -15,6 +15,7 @@ import { Role, Roles } from './role-decorator';
 import { RolesGuard } from 'src/auth/role-guard';
 import { User as CurrentUser } from 'src/auth/profile.decorator';
 import { Profile } from 'src/profile/entities/profile.entity';
+import { IssueChart } from 'src/issue/entities/issue.entity';
 
 @Resolver(() => Ticket)
 export class TicketResolver {
@@ -44,11 +45,22 @@ export class TicketResolver {
     return this.ticketService.findOne(id);
   }
 
+  @Query(() => [IssueChart])
+  getIssuesChart() {
+    return this.ticketService.getIssuesChart();
+  }
+
+  @Query(() => [Totality])
+  async totality() {
+    return await this.ticketService.getTotality();
+  }
+
   @Mutation(() => Boolean)
   updateTicket(
     @Args('updateTicketInput') updateTicketInput: UpdateTicketInput,
     @Args('_id') _id: string,
   ) {
+    console.log(updateTicketInput, 'updateTicketInput');
     let updateTicket = this.ticketService.updateTicketBytechForDiagnostic(
       _id,
       updateTicketInput,
@@ -174,6 +186,16 @@ export class TicketResolver {
     let updateManager =
       this.ticketService.updateTicketManager(updateTicketManager);
     if (updateManager) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  @UseGuards(JwtAuthGuard)
+  @Mutation(() => Boolean)
+  discount(@Args('_id') _id: string, @CurrentUser() profile: Profile) {
+    let discount = this.ticketService.discount(_id, profile.role);
+    if (discount) {
       return true;
     } else {
       return false;

@@ -37,6 +37,8 @@ export class CreateTicketInput {
   @Field({ nullable: true })
   remarqueTech: string;
   @Field({ nullable: true })
+  issue: string;
+  @Field({ nullable: true })
   reparable: string;
   @Field({ nullable: true })
   pdr: string;
@@ -83,6 +85,8 @@ export class CreateTicketInput {
   isReparable: boolean;
   @Field({ nullable: true })
   pdfPath: string;
+  @Field({ nullable: true })
+  openDiscount: string;
 }
 
 @InputType()

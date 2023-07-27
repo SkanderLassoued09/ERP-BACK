@@ -1,6 +1,11 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { ProfileService } from './profile.service';
-import { Profile, TechTickets } from './entities/profile.entity';
+import {
+  ClientByRegionChart,
+  GetTicketByProfile,
+  Profile,
+  TechTickets,
+} from './entities/profile.entity';
 import { CreateProfileInput, TokenData } from './dto/create-profile.input';
 import { UpdateProfileInput } from './dto/update-profile.input';
 import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
@@ -54,6 +59,87 @@ export class ProfileResolver {
   @Query(() => Profile)
   async findOne(@Args('username') username: string) {
     return await this.profileService.findOneForAuth(username);
+  }
+
+  sumTimes(times: string[]): string {
+    console.log('#################IN SUM#################');
+    if (!Array.isArray(times)) {
+      // console.log('');
+      return '00:00:00';
+    }
+    if (times.length === 0) {
+      console.log('Input array is empty');
+      return '00:00:00';
+    }
+    if (Array.isArray(times) && times.length > 0) {
+      const totalMilliseconds = times.reduce((acc, time) => {
+        const [hours, minutes, seconds] = time.split(':').map(Number);
+        return acc + hours * 3600000 + minutes * 60000 + seconds * 1000;
+      }, 0);
+
+      const sumDate = new Date(totalMilliseconds);
+      const sumTimeString = `${String(sumDate.getUTCHours()).padStart(
+        2,
+        '0',
+      )}:${String(sumDate.getUTCMinutes()).padStart(2, '0')}:${String(
+        sumDate.getUTCSeconds(),
+      ).padStart(2, '0')}`;
+
+      return sumTimeString;
+    }
+    console.log('#################IN SUM#################');
+  }
+
+  avgTime(times: string[]): string {
+    console.log('#################IN AVG#################');
+    if (!Array.isArray(times)) {
+      // console.log('Input is not array');
+      return '00:00:00';
+    }
+    if (times.length === 0) {
+      console.log('Input array is empty');
+      return '00:00:00';
+    }
+
+    if (Array.isArray(times) && times.length > 0) {
+      console.log('All conditions are true :D');
+      const totalMilliseconds = times.reduce((acc, time) => {
+        const [hours, minutes, seconds] = time.split(':').map(Number);
+        return acc + hours * 3600000 + minutes * 60000 + seconds * 1000;
+      }, 0);
+
+      const avgDate = new Date(totalMilliseconds / times.length);
+      const sumTimeString = `${String(avgDate.getUTCHours()).padStart(
+        2,
+        '0',
+      )}:${String(avgDate.getUTCMinutes()).padStart(2, '0')}:${String(
+        avgDate.getUTCSeconds(),
+      ).padStart(2, '0')}`;
+
+      return sumTimeString;
+    }
+
+    console.log('################# IN AVG #################');
+  }
+
+  @Query(() => [GetTicketByProfile])
+  async getTicketByProfile() {
+    let data = await this.profileService.getTicketByProfile();
+
+    data.map((el) => {
+      let arrDiag = el.totalDiag;
+      let arrRep = el.totalRep;
+
+      console.log(el.totalDiag, 'el');
+      console.log(arrDiag, 'arr');
+
+      el.totalDiag = this.sumTimes(arrDiag);
+      el.totalRep = this.sumTimes(arrRep);
+      el.moyDiag = this.avgTime(arrDiag);
+      el.moyRep = this.avgTime(arrRep);
+    });
+
+    return data;
   }
 
   @Mutation(() => Profile)

@@ -58,3 +58,34 @@ export class TechTickets {
   @Field(() => Int)
   ticketCount: number;
 }
+@ObjectType()
+export class ClientByRegionChart {
+  @Field()
+  name: string;
+  @Field()
+  value: number;
+}
+
+@ObjectType()
+export class ChartIssueByTech {
+  @Field()
+  name: string;
+  @Field()
+  value: number;
+}
+
+@ObjectType()
+export class GetTicketByProfile {
+  @Field({ nullable: true })
+  techName: string;
+  @Field({ nullable: true })
+  totalDiag: string;
+  @Field({ nullable: true })
+  totalRep: string;
+  @Field({ nullable: true })
+  moyDiag: string;
+  @Field({ nullable: true })
+  moyRep: string;
+  // @Field(() => [ChartIssueByTech])
+  // chartIssueByTech: ChartIssueByTech;
+}
