@@ -151,7 +151,10 @@ export class TicketService {
         },
         {
           $set: {
+            // magasin is done to enable btns
+            magasinDone: true,
             toCoordinator: false,
+
             'composants.$.sellPrice': magasinUpdateData.sellPrice,
             'composants.$.purchasePrice': magasinUpdateData.purchasePrice,
             'composants.$.statusComposant': magasinUpdateData.statusComposant,
@@ -176,7 +179,7 @@ export class TicketService {
         { _id },
         {
           $set: {
-            magasinDone: true,
+            coordinatorToAdmin: true,
           },
         },
       )
@@ -255,26 +258,84 @@ export class TicketService {
       });
   }
 
-  async getTicketByTech(name: string, role: string) {
-    console.log(name, 'name logged in');
+  getOldestOneTicket(res: Array<any>) {
+    // Find the oldest item based on the 'createdAt' timestamp
+    let oldestTimestamp: number = Infinity;
 
-    let admin = await this.ticketModel
-      .find({})
+    const updatedData = res.map((item) => {
+      const createdAtTimestamp = item.createdAt.getTime();
+      if (createdAtTimestamp < oldestTimestamp) {
+        oldestTimestamp = createdAtTimestamp;
+      }
+
+      return item;
+    });
+
+    // Update the 'isReadyForDiag' property of the oldest item to true
+    updatedData.forEach((item) => {
+      if (item.createdAt.getTime() === oldestTimestamp) {
+        item.isReadyForDiag = true;
+      }
+    });
+
+    console.log(updatedData);
+    return updatedData;
+  }
+
+  getTicketReturned() {
+    return this.ticketModel
+      .find({ status: 'RETURN' })
       .sort({ createdAt: -1 })
+      .limit(1)
       .then((res) => {
-        console.log(res, 'res');
+        console.log('-------------');
+        console.log(res, 'return stage');
+        console.log('--------------');
         return res;
       })
       .catch((err) => {
         return err;
       });
+  }
 
-    let tech = await this.ticketModel
-      .find({ assignedTo: name })
-      .sort({ createdAt: -1 })
+  async getTicketByTech(name: string, role: string) {
+    console.log('##########################');
+    let returnTicket = await this.getTicketReturned();
+    console.log('Returned ticket is fired', returnTicket);
+    console.log('##########################');
+    //  -------------------------------------------------
+    let admin = await this.ticketModel
+      .find({})
+      .sort({ createdAt: 1 })
+
       .then((res) => {
-        console.log(res, 'res');
         return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+    //  -------------------------------------------------
+    let tech = await this.ticketModel
+      .find({
+        assignedTo: name,
+        $or: [{ isOpenByTech: false }, { isReparable: true }],
+      })
+      .sort({ createdAt: -1 })
+      .limit(3)
+      .then((res) => {
+        if (returnTicket.length > 0) {
+          console.log('ticket is returned entred');
+          let [returnObj] = returnTicket;
+          returnObj['isReadyForDiag'] = true;
+          console.log(returnObj, 'spreaded arr');
+          res.shift();
+          res.unshift(returnObj);
+          return res;
+        } else if (returnTicket) {
+          console.log('FIFO start');
+          this.getOldestOneTicket(res);
+          return this.getOldestOneTicket(res);
+        }
       })
       .catch((err) => {
         return err;
@@ -284,7 +345,6 @@ export class TicketService {
       .find({ toMagasin: true })
       .sort({ createdAt: -1 })
       .then((res) => {
-        console.log(res, 'res');
         return res;
       })
       .catch((err) => {
@@ -724,5 +784,42 @@ export class TicketService {
         return err;
       });
     return Promise.all([{ totality: totalityTypes, count: totalTicketCount }]); // hh
+  }
+
+  setFinalPriceAvaiblableToAdminTech(_id: string) {
+    return this.ticketModel
+      .updateOne(
+        { _id },
+        {
+          $set: {
+            finalPriceToAdminTech: true,
+          },
+        },
+      )
+      .then((res) => {
+        console.log(res, 'set admin tech');
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
+  setFinalPriceAvaiblableToAdminManager(_id: string) {
+    return this.ticketModel
+      .updateOne(
+        { _id },
+        {
+          $set: {
+            finalPriceToAdminManager: true,
+          },
+        },
+      )
+      .then((res) => {
+        console.log(res, 'set admin tech');
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
   }
 }

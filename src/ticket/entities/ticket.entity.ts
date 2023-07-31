@@ -40,6 +40,12 @@ export const TicketSchema = new mongoose.Schema(
 
     composants: Array,
     magasinDone: { type: Boolean, required: false, default: false },
+    finalPriceToAdminTech: { type: Boolean, required: false, default: false },
+    finalPriceToAdminManager: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
     finalPrice: String,
     pdfPath: String,
     IsFinishedAdmins: { type: Boolean, required: false, default: false },
@@ -47,6 +53,8 @@ export const TicketSchema = new mongoose.Schema(
     // ticket sent to coordinator but not consulted => false = not checked by coordinbator | true = ticket checked by coordinator
     toCoordinator: { type: Boolean, required: false, default: false },
     isReparable: { type: Boolean, required: false, default: false },
+    isReadyForDiag: { type: Boolean, required: false, default: false },
+    coordinatorToAdmin: { type: Boolean, required: false, default: false },
 
     // openDiscount For differnnt profile
     openDiscount: {
@@ -106,6 +114,8 @@ export class Ticket {
   @Field({ nullable: true })
   typeClient: string;
   @Field({ nullable: true })
+  isReadyForDiag: boolean;
+  @Field({ nullable: true })
   createdBy: string;
   @Field({ nullable: true })
   assignedTo: string;
@@ -120,6 +130,8 @@ export class Ticket {
   @Field({ nullable: true })
   image: string;
   @Field({ nullable: true })
+  coordinatorToAdmin: boolean;
+  @Field({ nullable: true })
   diagnosticTimeByTech: string;
   @Field({ nullable: true })
   reparationTimeByTech: string;
@@ -129,6 +141,10 @@ export class Ticket {
   toMagasin: boolean;
   @Field({ nullable: true })
   toCoordinator: boolean;
+  @Field({ nullable: true })
+  finalPriceToAdminTech: boolean;
+  @Field({ nullable: true })
+  finalPriceToAdminManager: boolean;
   @Field({ nullable: true })
   Devis: string;
   @Field({ nullable: true })

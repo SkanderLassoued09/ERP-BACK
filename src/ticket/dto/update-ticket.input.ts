@@ -28,6 +28,10 @@ export class UpdateTicketInput {
   @Field({ nullable: true })
   numero: string;
   @Field({ nullable: true })
+  finalPriceToAdminTech: boolean;
+  @Field({ nullable: true })
+  finalPriceToAdminManager: boolean;
+  @Field({ nullable: true })
   remarqueManager: string;
   @Field({ nullable: true })
   remarqueTech: string;
@@ -52,6 +56,8 @@ export class UpdateTicketInput {
   isReparable: boolean;
   @Field({ nullable: true })
   openDiscount: string;
+  @Field({ nullable: true })
+  coordinatorToAdmin: string;
 }
 
 @InputType()

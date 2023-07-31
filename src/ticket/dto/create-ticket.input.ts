@@ -27,6 +27,10 @@ export class CreateTicketInput {
   @Field({ nullable: true })
   title: string;
   @Field({ nullable: true })
+  finalPriceToAdminTech: boolean;
+  @Field({ nullable: true })
+  finalPriceToAdminManager: boolean;
+  @Field({ nullable: true })
   designiation: string;
   @Field({ nullable: true })
   emplacement: string;
@@ -64,6 +68,8 @@ export class CreateTicketInput {
   facture: string;
   @Field({ nullable: true })
   bc: string;
+  @Field({ nullable: true })
+  coordinatorToAdmin: string;
   @Field({ nullable: true })
   bl: string;
   @Field({ nullable: true })

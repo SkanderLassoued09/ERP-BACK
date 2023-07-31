@@ -280,4 +280,24 @@ export class TicketResolver {
       return false;
     }
   }
+
+  @Mutation(() => Boolean)
+  setFinalPriceAvaiblableToAdminTech(@Args('_id') _id: string) {
+    let affect = this.ticketService.setFinalPriceAvaiblableToAdminTech(_id);
+    if (affect) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @Mutation(() => Boolean)
+  setFinalPriceAvaiblableToAdminManager(@Args('_id') _id: string) {
+    let affect = this.ticketService.setFinalPriceAvaiblableToAdminManager(_id);
+    if (affect) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
