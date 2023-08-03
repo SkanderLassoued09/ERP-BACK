@@ -534,7 +534,7 @@ export class TicketService {
         {
           _id: updateTicketManager._id,
         },
-        { $set: { finalStatusTicket: STATUS_TICKET.IGNORED } },
+        { $set: { status: STATUS_TICKET.IGNORED } },
       )
       .then((res) => {
         return res;
@@ -615,7 +615,7 @@ export class TicketService {
         { _id },
         {
           $set: {
-            finalStatusTicket: finalStatus,
+            status: finalStatus,
           },
         },
       )

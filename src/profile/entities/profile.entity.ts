@@ -14,6 +14,8 @@ export const ProfileSchema = new mongoose.Schema(
     phone: String,
     role: String,
     email: String,
+
+    isTechBusy: { type: Boolean, required: false, default: false },
   },
   { timestamps: true },
 );
@@ -42,7 +44,8 @@ export class Profile extends Document {
   role: string;
   @Field()
   email: string;
-
+  @Field()
+  isTechBusy: boolean;
   @Field()
   createdAt: Date;
   @Field()
@@ -53,6 +56,8 @@ export class Profile extends Document {
 export class TechTickets {
   @Field()
   _id: string;
+  @Field()
+  isTechBusy: boolean;
   @Field()
   username: string;
   @Field(() => Int)
