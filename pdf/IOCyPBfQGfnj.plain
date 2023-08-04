@@ -1,0 +1,18 @@
+#mutation{login(loginAuthInput:{
+ # username:"nez",
+  #password:"123456"
+#})
+ # {access_token}} 
+#mutation{
+#createProfile(createProfileInput:
+ # {
+ # username:"nez",
+  #firstName:"nez",
+  #lastName:"nez",
+  #password:"123456",
+  #phone:"20000000",
+  #role:"TECH",
+  #email:"tech@test.tes",
+  #statusProfile:"test"
+#})
+#  {firstName}}

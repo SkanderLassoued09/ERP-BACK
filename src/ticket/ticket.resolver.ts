@@ -173,6 +173,16 @@ export class TicketResolver {
       _id,
       finalPrice,
     );
+    console.log(affectationPrice, 'affectationPrice');
+    if (affectationPrice) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  @Mutation(() => Boolean)
+  affectPrice(@Args('_id') _id: string, @Args('price') price: string) {
+    let affectationPrice = this.ticketService.affectPrice(_id, price);
     if (affectationPrice) {
       return true;
     } else {

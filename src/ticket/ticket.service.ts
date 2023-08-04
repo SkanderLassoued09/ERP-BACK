@@ -403,7 +403,26 @@ export class TicketService {
         return err;
       });
   }
-
+  affectPrice(_id: string, price: string) {
+    return this.ticketModel
+      .updateOne(
+        { _id },
+        {
+          $set: {
+            price,
+          },
+        },
+      )
+      .then((res) => {
+        if (res) {
+          this.adminsPriceFinished(_id);
+        }
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
   async affectationFinalPrice(_id: string, finalPrice: string) {
     return await this.ticketModel
       .updateOne(
@@ -517,6 +536,7 @@ export class TicketService {
             facture: `${randompdfFileFacture}.${extensionFacture}`,
             Devis: `${randompdfFileDevis}.${extensionDevis}`,
             toCoordinator: false,
+            isFinalPriceAffected: true,
           },
         },
       )
@@ -578,7 +598,7 @@ export class TicketService {
         return err;
       });
   }
-
+  // When tech finishs ticket reparation
   updateRemarqueTechReparation(
     _id: string,
     remarqueTech: string,
@@ -591,7 +611,8 @@ export class TicketService {
           $set: {
             remarqueTech,
             reparationTimeByTech,
-            finalStatusTicket: STATUS_TICKET.FINISHED,
+            status: STATUS_TICKET.FINISHED,
+            isReparationFinishedByTech: true,
           },
         },
       )
@@ -783,7 +804,7 @@ export class TicketService {
       .catch((err) => {
         return err;
       });
-    return Promise.all([{ totality: totalityTypes, count: totalTicketCount }]); // hh
+    return Promise.all([{ totality: totalityTypes, count: totalTicketCount }]);
   }
 
   setFinalPriceAvaiblableToAdminTech(_id: string) {

@@ -24,8 +24,8 @@ export const TicketSchema = new mongoose.Schema(
     affectedToClient: String,
     issue: String,
     status: { type: String, required: false, default: STATUS_TICKET.PENDING },
-
-    finalStatusTicket: { type: String, required: false },
+    // to handle btn final affectaion price // before discount
+    isFinalPriceAffected: { type: Boolean, required: false },
     isOpenByTech: { type: Boolean, required: false, default: false },
     diagnosticTimeByTech: String,
     reparationTimeByTech: String,
@@ -46,6 +46,13 @@ export const TicketSchema = new mongoose.Schema(
       required: false,
       default: false,
     },
+    isReparationFinishedByTech: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+
+    price: String,
     finalPrice: String,
     pdfPath: String,
     IsFinishedAdmins: { type: Boolean, required: false, default: false },
@@ -111,10 +118,15 @@ export class Ticket {
   pdr: string;
   @Field({ nullable: true })
   techNameSug: string;
+
+  @Field({ nullable: true })
+  price: string;
   @Field({ nullable: true })
   typeClient: string;
   @Field({ nullable: true })
   isReadyForDiag: boolean;
+  @Field({ nullable: true })
+  isReparationFinishedByTech: boolean;
   @Field({ nullable: true })
   createdBy: string;
   @Field({ nullable: true })
@@ -181,7 +193,7 @@ export class Ticket {
 
   // for final status ticket after passing all flow
   @Field({ nullable: true })
-  finalStatusTicket: string;
+  isFinalPriceAffected: boolean;
   @Field({ nullable: true })
   pdfPath: string;
 }
