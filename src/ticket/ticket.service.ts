@@ -96,7 +96,7 @@ export class TicketService {
 
   async getTicketForCoordinator() {
     return await this.ticketModel
-      .find() // { toCoordinator: false }
+      .find({ statusFinal: true }) // { toCoordinator: false }
       .then((res) => {
         return res;
       })
@@ -114,6 +114,7 @@ export class TicketService {
         { _id },
         {
           $set: {
+            status: STATUS_TICKET.PENDING,
             emplacement: updateTicketInput.emplacement,
             numero: updateTicketInput.numero,
             remarqueTech: updateTicketInput.remarqueTech,
@@ -318,7 +319,13 @@ export class TicketService {
     let tech = await this.ticketModel
       .find({
         assignedTo: name,
-        $or: [{ isOpenByTech: false }, { isReparable: true }],
+        status: { $ne: STATUS_TICKET.FINISHED },
+        $and: [
+          {
+            //g
+            $or: [{ isOpenByTech: false }, { isReparable: true }],
+          },
+        ],
       })
       .sort({ createdAt: -1 })
       .limit(3)
@@ -524,49 +531,63 @@ export class TicketService {
       join(__dirname, `../../pdf/${randompdfFileFacture}.${extensionFacture}`),
       bufferFacture,
     );
-    let ticketValidated = await this.ticketModel
-      .updateOne(
-        { _id: updateTicketManager._id },
-        {
-          $set: {
-            finalPrice: updateTicketManager.remise,
-            // isReparable: updateTicketManager.statusFinal,
-            bc: `${randompdfFile}.${extension}`,
-            bl: `${randompdfFileBl}.${extensionBl}`,
-            facture: `${randompdfFileFacture}.${extensionFacture}`,
-            Devis: `${randompdfFileDevis}.${extensionDevis}`,
-            toCoordinator: false,
-            isFinalPriceAffected: true,
+    if (updateTicketManager.statusFinal === true) {
+      console.log('vzlider is fired');
+      return await this.ticketModel
+        .updateOne(
+          { _id: updateTicketManager._id },
+          {
+            $set: {
+              status: STATUS_TICKET.PENDING,
+              finalPrice: updateTicketManager.remise,
+              statusFinal: updateTicketManager.statusFinal,
+              bc: `${randompdfFile}.${extension}`,
+              bl: `${randompdfFileBl}.${extensionBl}`,
+              facture: `${randompdfFileFacture}.${extensionFacture}`,
+              Devis: `${randompdfFileDevis}.${extensionDevis}`,
+              toCoordinator: false,
+              isFinalPriceAffected: true,
+            },
           },
-        },
-      )
-      .then((res) => {
-        console.log(res, 'res buffer');
-        return res;
-      })
-      .catch((err) => {
-        console.log(err, 'err buffer');
-        return err;
-      });
+        )
+        .then((res) => {
+          console.log(res, 'res buffer');
+          return res;
+        })
+        .catch((err) => {
+          console.log(err, 'err buffer');
+          return err;
+        });
+    }
 
-    let ticketIgnored = this.ticketModel
-      .updateOne(
-        {
-          _id: updateTicketManager._id,
-        },
-        { $set: { status: STATUS_TICKET.IGNORED } },
-      )
-      .then((res) => {
-        return res;
-      })
-      .catch((err) => {
-        return err;
-      });
+    if (updateTicketManager.statusFinal === false) {
+      console.log('annuler is fired');
+      return this.ticketModel
 
-    if (updateTicketManager.statusFinal) {
-      return ticketValidated;
-    } else {
-      return ticketIgnored;
+        .updateOne(
+          {
+            _id: updateTicketManager._id,
+          },
+          {
+            $set: {
+              status: STATUS_TICKET.IGNORED,
+              finalPrice: updateTicketManager.remise,
+              statusFinal: updateTicketManager.statusFinal,
+              bc: `${randompdfFile}.${extension}`,
+              bl: `${randompdfFileBl}.${extensionBl}`,
+              facture: `${randompdfFileFacture}.${extensionFacture}`,
+              Devis: `${randompdfFileDevis}.${extensionDevis}`,
+              toCoordinator: false,
+              isFinalPriceAffected: true,
+            },
+          },
+        )
+        .then((res) => {
+          return res;
+        })
+        .catch((err) => {
+          return err;
+        });
     }
   }
 

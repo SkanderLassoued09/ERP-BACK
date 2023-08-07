@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Profile, ProfileDocument } from './entities/profile.entity';
 import { ROLE } from 'src/auth/roles';
+import { STATUS_TICKET } from 'src/ticket/ticket';
 
 @Injectable()
 export class ProfileService {
@@ -50,13 +51,23 @@ export class ProfileService {
   async getAllTech() {
     return await this.profileModel
       .aggregate([
-        { $match: { role: ROLE.TECH } },
+        { $match: { role: { $in: [ROLE.TECH, ROLE.ADMIN_TECH] } } },
         {
           $lookup: {
             from: 'tickets',
             localField: 'username',
             foreignField: 'assignedTo',
             as: 'ticketByTech',
+            pipeline: [
+              {
+                $match: {
+                  status: {
+                    $nin: [STATUS_TICKET.FINISHED, STATUS_TICKET.IGNORED],
+                  },
+                },
+              },
+              // Add more stages to the pipeline as needed
+            ],
           },
         },
         // { $unwind: '$ticketByTech' },

@@ -62,18 +62,18 @@ export class UpdateTicketInput {
 
 @InputType()
 export class UpdateTicketManager {
-  @Field()
+  @Field({ nullable: true })
   _id: string;
-  @Field()
+  @Field({ nullable: true })
   remise: string;
-  @Field()
-  statusFinal: string;
-  @Field()
+  @Field({ nullable: true })
+  statusFinal: boolean;
+  @Field({ nullable: true })
   bc: string;
-  @Field()
+  @Field({ nullable: true })
   bl: string;
-  @Field()
+  @Field({ nullable: true })
   facture: string;
-  @Field()
+  @Field({ nullable: true })
   Devis: string;
 }

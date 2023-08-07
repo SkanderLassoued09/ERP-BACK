@@ -62,6 +62,8 @@ export const TicketSchema = new mongoose.Schema(
     isReparable: { type: Boolean, required: false, default: false },
     isReadyForDiag: { type: Boolean, required: false, default: false },
     coordinatorToAdmin: { type: Boolean, required: false, default: false },
+    // In discount component AKA modal final component user set ticket to annuler
+    statusFinal: { type: Boolean, required: false, default: true },
 
     // openDiscount For differnnt profile
     openDiscount: {
@@ -118,6 +120,8 @@ export class Ticket {
   pdr: string;
   @Field({ nullable: true })
   techNameSug: string;
+  @Field({ nullable: true })
+  statusFinal: string;
 
   @Field({ nullable: true })
   price: string;

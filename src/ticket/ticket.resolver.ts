@@ -166,8 +166,8 @@ export class TicketResolver {
 
   @Mutation(() => Boolean)
   affectationFinalPrice(
-    @Args('_id') _id: string,
-    @Args('finalPrice') finalPrice: string,
+    @Args('_id', { nullable: true }) _id: string,
+    @Args('finalPrice', { nullable: true }) finalPrice: string,
   ) {
     let affectationPrice = this.ticketService.affectationFinalPrice(
       _id,
@@ -175,6 +175,7 @@ export class TicketResolver {
     );
     console.log(affectationPrice, 'affectationPrice');
     if (affectationPrice) {
+      console.log(affectationPrice, 'aff');
       return true;
     } else {
       return false;
@@ -195,6 +196,7 @@ export class TicketResolver {
   ) {
     let updateManager =
       this.ticketService.updateTicketManager(updateTicketManager);
+
     if (updateManager) {
       return true;
     } else {
