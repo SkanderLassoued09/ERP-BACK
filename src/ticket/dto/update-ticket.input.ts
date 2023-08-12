@@ -18,6 +18,10 @@ export class ComposantsUpdate {
   comingDate: string;
   @Field({ nullable: true })
   isAffected: boolean;
+  @Field({ nullable: true })
+  package: string;
+  @Field({ nullable: true })
+  pdfComposant: string;
 }
 @InputType()
 export class UpdateTicketInput {

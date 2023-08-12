@@ -19,8 +19,8 @@ export class Issue {
 }
 @ObjectType()
 export class IssueChart {
-  @Field()
+  @Field({ nullable: true })
   name: string;
-  @Field()
+  @Field({ nullable: true })
   value: string;
 }

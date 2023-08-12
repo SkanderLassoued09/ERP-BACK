@@ -147,6 +147,16 @@ export class TicketResolver {
     }
   }
 
+  @Mutation(() => Boolean)
+  async noReparableNoPDR(@Args('_id') _id: string) {
+    let magasin = this.ticketService.noReparableNoPDR(_id);
+    if (magasin) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @Mutation(() => Ticket)
   update() {
     return this.ticketService.updateGlag();

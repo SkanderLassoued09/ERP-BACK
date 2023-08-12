@@ -84,6 +84,33 @@ export class ClientService {
       });
   }
 
+  getClientByDate() {
+    return this.clientModel
+      .aggregate([
+        {
+          $group: {
+            _id: '$createdAt',
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $project: {
+            name: '$_id',
+            value: '$count',
+            _id: 0,
+          },
+        },
+      ])
+      .then((res) => {
+        console.log(res, 'res');
+        return res;
+      })
+      .catch((err) => {
+        console.log(err, 'err');
+        return err;
+      });
+  }
+
   async getAllClientCompany() {
     return await this.clientModel.find({}).then((res) => {
       console.log(res, 'client');

@@ -104,11 +104,57 @@ export class TicketService {
         return err;
       });
   }
+
+  convertFile(file: any) {
+    // const extension = getFileExtension(
+    //   file.map((el) => {
+    //     return el.pdfComposant;
+    //   }),
+    // );
+    // console.log(
+    //   file.map((el) => {
+    //     return el.pdfComposant;
+    //   }),
+    //   'bufferr11',
+    // );
+
+    // const base64Strings = file.map((item) => item.pdfComposant.split(',')[1]);
+    // const concatenatedBase64 = base64Strings.join('');
+
+    // const buffer = Buffer.from(concatenatedBase64, 'base64');
+    // const randompdfFile = randomstring.generate({
+    //   length: 12,
+    //   charset: 'alphabetic',
+    // });
+    // fs.writeFileSync(
+    //   join(__dirname, `../../pdf/${randompdfFile}.${extension}`),
+    //   buffer,
+    // );
+
+    // return `${randompdfFile}.${extension}`;
+    const extension = getFileExtension(file);
+    console.log(file, 'file');
+    console.log('---------------------------');
+    console.log(file, 'bufferr11');
+    console.log('----------------------------');
+    const buffer = Buffer.from(file.split(',')[1], 'base64');
+    const randompdfFile = randomstring.generate({
+      length: 12,
+      charset: 'alphabetic',
+    });
+    fs.writeFileSync(
+      join(__dirname, `../../pdf/${randompdfFile}.${extension}`),
+      buffer,
+    );
+    return `${randompdfFile}.${extension}`;
+  }
+
   async updateTicketBytechForDiagnostic(
     _id: string,
     updateTicketInput: UpdateTicketInput,
   ) {
     console.log(updateTicketInput, 'data coming');
+
     return this.ticketModel
       .updateOne(
         { _id },
@@ -127,6 +173,8 @@ export class TicketService {
             composants: updateTicketInput.composants.map((item) => ({
               nameComposant: item.nameComposant,
               quantity: item.quantity,
+              package: item.package,
+              pdfComposant: this.convertFile(item.pdfComposant),
             })),
           },
         },
@@ -373,6 +421,17 @@ export class TicketService {
     if (role === ROLE.MAGASIN) {
       return magasin;
     }
+  }
+
+  noReparableNoPDR(_id: string) {
+    return this.ticketModel
+      .updateOne({ _id }, { $set: { magasinDone: true } })
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
   }
 
   findOne(id: number) {
