@@ -83,3 +83,15 @@ export class ChartType {
   @Field()
   value: number;
 }
+
+@ObjectType()
+export class CalendarChart {
+  @Field({ nullable: true })
+  date: string;
+  // @Field({ nullable: true })
+  // COMPANY: number;
+  // @Field({ nullable: true })
+  // CLIENT: number;
+  @Field()
+  value: number;
+}

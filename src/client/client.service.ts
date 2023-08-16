@@ -165,6 +165,82 @@ export class ClientService {
     return `This action returns a #${id} client`;
   }
 
+  getClientLastMonth() {
+    const currentDate = new Date();
+    const lastMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() - 1,
+      currentDate.getDate(),
+    );
+
+    return this.clientModel
+      .aggregate([
+        {
+          $group: {
+            _id: {
+              date: {
+                $dateToString: { format: '%Y-%m-%d', date: '$createdAt' },
+              },
+              type: '$type',
+            },
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $group: {
+            _id: '$_id.date',
+            counts: {
+              $push: {
+                type: '$_id.type',
+                count: '$count',
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            date: '$_id',
+            companyCount: {
+              $ifNull: [
+                {
+                  $arrayElemAt: [
+                    '$counts.count',
+                    { $indexOfArray: ['$counts.type', 'société'] },
+                  ],
+                },
+                0,
+              ],
+            },
+            clientCount: {
+              $ifNull: [
+                {
+                  $arrayElemAt: [
+                    '$counts.count',
+                    { $indexOfArray: ['$counts.type', 'client'] },
+                  ],
+                },
+                0,
+              ],
+            },
+          },
+        },
+        {
+          $project: {
+            date: 1,
+            value: { $add: ['$companyCount', '$clientCount'] },
+          },
+        },
+        {
+          $sort: { date: 1 },
+        },
+      ])
+      .then((res) => {
+        console.log(res, 'res');
+        return res;
+      });
+  }
+
   update(id: number, updateClientInput: UpdateClientInput) {
     return `This action updates a #${id} client`;
   }

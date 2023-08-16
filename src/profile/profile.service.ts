@@ -64,6 +64,7 @@ export class ProfileService {
                   status: {
                     $nin: [STATUS_TICKET.FINISHED, STATUS_TICKET.IGNORED],
                   },
+                  isOpenByTech: false,
                 },
               },
               // Add more stages to the pipeline as needed

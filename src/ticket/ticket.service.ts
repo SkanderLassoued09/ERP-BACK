@@ -370,7 +370,6 @@ export class TicketService {
         status: { $ne: STATUS_TICKET.FINISHED },
         $and: [
           {
-            //g
             $or: [{ isOpenByTech: false }, { isReparable: true }],
           },
         ],

@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { ClientService } from './client.service';
-import { ChartType, Client } from './entities/client.entity';
+import { CalendarChart, ChartType, Client } from './entities/client.entity';
 import { CreateClientInput } from './dto/create-client.input';
 import { UpdateClientInput } from './dto/update-client.input';
 import { Role, Roles } from 'src/ticket/role-decorator';
@@ -49,6 +49,11 @@ export class ClientResolver {
   @Query(() => [ChartType])
   getClientCompanyChart() {
     return this.clientService.getClientCompanyChart();
+  }
+
+  @Query(() => [CalendarChart])
+  getClientLastMonth() {
+    return this.clientService.getClientLastMonth();
   }
 
   @Query(() => Client, { name: 'client' })
