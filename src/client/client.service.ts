@@ -4,9 +4,8 @@ import { UpdateClientInput } from './dto/update-client.input';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Client } from './entities/client.entity';
-import { Args } from '@nestjs/graphql';
+
 import { CLIENT_TYPE } from './clientType';
-import { count } from 'console';
 
 @Injectable()
 export class ClientService {

@@ -25,13 +25,56 @@ export class ProfileService {
       });
   }
 
+  updateProfile(_id: string, updateProfileInput: UpdateProfileInput) {
+    console.log(updateProfileInput, 'updateProfileInput');
+    return this.profileModel
+      .updateOne(
+        { _id },
+        {
+          $set: {
+            firstName: updateProfileInput.firstName,
+            lastName: updateProfileInput.lastName,
+            phone: updateProfileInput.phone,
+          },
+        },
+      )
+      .then((res) => {
+        console.log('profile update', res);
+        return res;
+      })
+      .catch((err) => {
+        console.log('err', err);
+        return err;
+      });
+  }
+
+  deleteUser(_id: string) {
+    return this.profileModel
+      .updateOne(
+        { _id },
+        {
+          $set: {
+            isDeleted: true,
+          },
+        },
+      )
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        console.log('err');
+      });
+  }
   // for listing profiles
   async getAllProfile() {
     return await this.profileModel
-      .find({})
+      .find({ isDeleted: false })
       .sort({ createdAt: -1 })
       .then((res) => {
         return res;
+      })
+      .catch((err) => {
+        return err;
       });
   }
 

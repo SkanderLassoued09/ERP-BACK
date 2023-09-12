@@ -16,6 +16,7 @@ export const ProfileSchema = new mongoose.Schema(
     email: String,
 
     isTechBusy: { type: Boolean, required: false, default: false },
+    isDeleted: { type: Boolean, required: false, default: false },
   },
   { timestamps: true },
 );
@@ -30,6 +31,8 @@ ProfileSchema.pre('save', async function (next) {
 });
 @ObjectType()
 export class Profile extends Document {
+  @Field()
+  _id: string;
   @Field()
   username: string;
   @Field()
@@ -50,6 +53,8 @@ export class Profile extends Document {
   createdAt: Date;
   @Field()
   updatedAt: Date;
+  @Field()
+  isDeleted: boolean;
 }
 
 @ObjectType()
