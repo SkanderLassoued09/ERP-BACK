@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
   CreateTicketInput,
+  Filter,
   MagasinUpdateData,
 } from './dto/create-ticket.input';
 import {
@@ -15,6 +16,7 @@ import { ROLE } from 'src/auth/roles';
 import * as randomstring from 'randomstring';
 import * as fs from 'fs';
 import { join } from 'path';
+import { start } from 'repl';
 
 function getFileExtension(base64) {
   const metaData = base64.split(',')[0];
@@ -920,6 +922,39 @@ export class TicketService {
       })
       .catch((err) => {
         return err;
+      });
+  }
+  filterGain(filterGain: Filter) {
+    console.log(filterGain.start, 'filter  start');
+    console.log(typeof filterGain.end, 'filter gain end');
+    const startDate =
+      filterGain.start !== (null || 'null') ? new Date(filterGain.start) : null;
+    const endDate =
+      filterGain.end !== (null || 'null') ? new Date(filterGain.end) : null;
+
+    let match = {};
+    if (startDate && endDate === null) {
+      match['$gte'] = startDate;
+    }
+
+    if (startDate && endDate) {
+      match['$gte'] = startDate;
+      match['$lte'] = endDate;
+    }
+
+    console.log(match, 'condition');
+    return this.ticketModel
+      .find({
+        // Use createdAt field for date filtering
+        createdAt: match,
+      })
+      .exec()
+      .then((res) => {
+        console.log(res, 'res');
+        return res;
+      })
+      .catch((err) => {
+        throw err;
       });
   }
 }

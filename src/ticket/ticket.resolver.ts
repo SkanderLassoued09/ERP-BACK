@@ -3,6 +3,7 @@ import { TicketService } from './ticket.service';
 import { Ticket, Totality } from './entities/ticket.entity';
 import {
   CreateTicketInput,
+  Filter,
   MagasinUpdateData,
 } from './dto/create-ticket.input';
 import {
@@ -321,5 +322,10 @@ export class TicketResolver {
     } else {
       return false;
     }
+  }
+
+  @Mutation(() => [Ticket])
+  filterGain(@Args('filter') filterGain: Filter) {
+    return this.ticketService.filterGain(filterGain);
   }
 }

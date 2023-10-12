@@ -206,6 +206,7 @@ export class ProfileService {
             totalRep: '$reparationTime',
             moyDiag: '',
             moyRep: '',
+            techCost: 1,
           },
         },
       ])

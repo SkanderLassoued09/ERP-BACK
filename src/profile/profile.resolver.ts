@@ -91,13 +91,11 @@ export class ProfileResolver {
   }
 
   avgTime(times: string[]): string {
-    console.log('#################IN AVG#################');
     if (!Array.isArray(times)) {
       // console.log('Input is not array');
       return '00:00:00';
     }
     if (times.length === 0) {
-      console.log('Input array is empty');
       return '00:00:00';
     }
 
@@ -118,8 +116,14 @@ export class ProfileResolver {
 
       return sumTimeString;
     }
+  }
 
-    console.log('################# IN AVG #################');
+  calculateTechCoast(time: string) {
+    const [hh, mm, ss] = time.split(':').map(Number);
+    const totalMilliseconds = hh * 3600000 + mm * 60000 + ss * 1000;
+    const totalHours = totalMilliseconds / 3600000;
+    const totalCost = totalHours * 5;
+    return totalCost.toFixed(3);
   }
 
   @Query(() => [GetTicketByProfile])
@@ -130,13 +134,13 @@ export class ProfileResolver {
       let arrDiag = el.totalDiag;
       let arrRep = el.totalRep;
 
-      console.log(el.totalDiag, 'el');
-      console.log(arrDiag, 'arr');
-
       el.totalDiag = this.sumTimes(arrDiag);
+      let _totalDiag = el.totalDiag;
+      console.log(_totalDiag, 'for testing purpose');
       el.totalRep = this.sumTimes(arrRep);
       el.moyDiag = this.avgTime(arrDiag);
       el.moyRep = this.avgTime(arrRep);
+      el.techCost = this.calculateTechCoast(_totalDiag);
     });
 
     return data;

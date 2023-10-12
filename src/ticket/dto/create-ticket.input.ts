@@ -112,3 +112,11 @@ export class MagasinUpdateData {
   @Field({ nullable: true })
   pdfPath: string;
 }
+
+@InputType()
+export class Filter {
+  @Field()
+  start: string;
+  @Field({ nullable: true })
+  end: string | null;
+}
