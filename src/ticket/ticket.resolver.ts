@@ -226,8 +226,8 @@ export class TicketResolver {
   }
 
   @Mutation(() => Boolean)
-  setIsReparable(@Args('_id') _id: string) {
-    let update = this.ticketService.setIsReparable(_id);
+  setIsReparable(@Args('_id') _id: string, @Args('techname') techname: string) {
+    let update = this.ticketService.setIsReparable(_id, techname);
     if (update) {
       return true;
     } else {

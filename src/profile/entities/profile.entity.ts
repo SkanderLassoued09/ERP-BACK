@@ -97,7 +97,9 @@ export class GetTicketByProfile {
   @Field({ nullable: true })
   moyRep: string;
   @Field({ nullable: true })
-  techCost: number;
+  techCostRep: number;
+  @Field({ nullable: true })
+  techCostDiag: number;
   // @Field(() => [ChartIssueByTech])
   // chartIssueByTech: ChartIssueByTech;
 }

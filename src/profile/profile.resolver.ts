@@ -91,6 +91,7 @@ export class ProfileResolver {
   }
 
   avgTime(times: string[]): string {
+    console.log(times, 'times');
     if (!Array.isArray(times)) {
       // console.log('Input is not array');
       return '00:00:00';
@@ -119,6 +120,7 @@ export class ProfileResolver {
   }
 
   calculateTechCoast(time: string) {
+    console.log(time, 'test');
     const [hh, mm, ss] = time.split(':').map(Number);
     const totalMilliseconds = hh * 3600000 + mm * 60000 + ss * 1000;
     const totalHours = totalMilliseconds / 3600000;
@@ -128,22 +130,25 @@ export class ProfileResolver {
 
   @Query(() => [GetTicketByProfile])
   async getTicketByProfile() {
-    let data = await this.profileService.getTicketByProfile();
-
-    data.map((el) => {
-      let arrDiag = el.totalDiag;
-      let arrRep = el.totalRep;
-
-      el.totalDiag = this.sumTimes(arrDiag);
-      let _totalDiag = el.totalDiag;
-      console.log(_totalDiag, 'for testing purpose');
-      el.totalRep = this.sumTimes(arrRep);
-      el.moyDiag = this.avgTime(arrDiag);
-      el.moyRep = this.avgTime(arrRep);
-      el.techCost = this.calculateTechCoast(_totalDiag);
+    let dataDiag = await this.profileService.getTicketByProfileDiag();
+    let dataRep = await this.profileService.getTicketByProfileRep();
+    // Combine the data from both arrays
+    const combinedData = dataDiag.map((diag) => {
+      const rep = dataRep.find((rep) => rep.techName === diag.techName);
+      let diagCost = this.sumTimes(diag.totalDiag);
+      let repCost = this.sumTimes(rep.totalRep);
+      return {
+        techName: diag.techName,
+        totalDiag: this.sumTimes(diag.totalDiag),
+        totalRep: this.sumTimes(rep.totalRep),
+        techCostDiag: this.calculateTechCoast(diagCost),
+        techCostRep: this.calculateTechCoast(repCost),
+        moyRep: this.avgTime(rep.totalRep),
+        moyDiag: this.avgTime(diag.totalDiag),
+      };
     });
-
-    return data;
+    console.log(combinedData, 'res');
+    return combinedData;
   }
 
   @Mutation(() => Boolean)

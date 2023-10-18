@@ -19,7 +19,8 @@ export const TicketSchema = new mongoose.Schema(
 
     typeClient: String,
     createdBy: String,
-    assignedTo: String,
+    assignedTo: String, // tech does diag
+    assignedToRep: String, // tech does rep
     affectedToCompany: String,
     affectedToClient: String,
     issue: String,
@@ -139,6 +140,8 @@ export class Ticket {
   createdBy: string;
   @Field({ nullable: true })
   assignedTo: string;
+  @Field({ nullable: true })
+  assignedToRep: string;
   @Field({ nullable: true })
   createdAt: Date;
   @Field({ nullable: true })

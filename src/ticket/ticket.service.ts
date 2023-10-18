@@ -651,9 +651,12 @@ export class TicketService {
     }
   }
 
-  async setIsReparable(_id) {
+  async setIsReparable(_id, techname: string) {
     return await this.ticketModel
-      .updateOne({ _id }, { $set: { isReparable: true } })
+      .updateOne(
+        { _id },
+        { $set: { isReparable: true, assignedToRep: techname } },
+      )
       .then((res) => {
         return res;
       })

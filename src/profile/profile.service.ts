@@ -174,7 +174,7 @@ export class ProfileService {
       });
   }
 
-  getTicketByProfile() {
+  getTicketByProfileDiag() {
     return this.profileModel
       .aggregate([
         {
@@ -192,6 +192,44 @@ export class ProfileService {
             diagnostiqueTime: {
               $push: '$ticketByProfile.diagnosticTimeByTech',
             },
+            // reparationTime: {
+            //   $push: '$ticketByProfile.reparationTimeByTech',
+            // },
+          },
+        },
+
+        {
+          $project: {
+            _id: 0,
+            techName: '$_id',
+            totalDiag: '$diagnostiqueTime',
+          },
+        },
+      ])
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
+
+  getTicketByProfileRep() {
+    return this.profileModel
+      .aggregate([
+        {
+          $lookup: {
+            from: 'tickets',
+            localField: 'username',
+            foreignField: 'assignedToRep',
+            as: 'ticketByProfile',
+          },
+        },
+        { $unwind: '$ticketByProfile' },
+        {
+          $group: {
+            _id: '$username',
+
             reparationTime: {
               $push: '$ticketByProfile.reparationTimeByTech',
             },
@@ -202,11 +240,7 @@ export class ProfileService {
           $project: {
             _id: 0,
             techName: '$_id',
-            totalDiag: '$diagnostiqueTime',
             totalRep: '$reparationTime',
-            moyDiag: '',
-            moyRep: '',
-            techCost: 1,
           },
         },
       ])
