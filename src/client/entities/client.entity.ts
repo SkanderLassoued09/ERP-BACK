@@ -1,4 +1,5 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { Schema } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 
 export type ClientDocument = Client & Document;
@@ -27,6 +28,21 @@ export const ClientSchema = new mongoose.Schema(
     website: String,
     techContact: String,
     nRegisterCommerce: String,
+    achat: {
+      fullName: String,
+      email: String,
+      phone: String,
+    },
+    financier: {
+      fullName: String,
+      email: String,
+      phone: String,
+    },
+    technique: {
+      fullName: String,
+      email: String,
+      phone: String,
+    },
   },
   { _id: false, timestamps: true },
 );

@@ -1,6 +1,16 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
 
 @InputType()
+export class DetailsClient {
+  @Field()
+  fullName: string;
+  @Field()
+  email: string;
+  @Field()
+  phone: string;
+}
+
+@InputType()
 export class CreateClientInput {
   @Field({ nullable: true })
   _id: string;
@@ -44,4 +54,10 @@ export class CreateClientInput {
   techContact: string;
   @Field({ nullable: true })
   nRegisterCommerce: string;
+  @Field({ nullable: true })
+  achat: DetailsClient;
+  @Field({ nullable: true })
+  financier: DetailsClient;
+  @Field({ nullable: true })
+  technique: DetailsClient;
 }

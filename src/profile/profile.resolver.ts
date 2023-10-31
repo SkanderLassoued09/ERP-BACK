@@ -62,13 +62,11 @@ export class ProfileResolver {
   }
 
   sumTimes(times: string[]): string {
-    console.log('#################IN SUM#################');
     if (!Array.isArray(times)) {
       // console.log('');
       return '00:00:00';
     }
     if (times.length === 0) {
-      console.log('Input array is empty');
       return '00:00:00';
     }
     if (Array.isArray(times) && times.length > 0) {
@@ -87,11 +85,9 @@ export class ProfileResolver {
 
       return sumTimeString;
     }
-    console.log('#################IN SUM#################');
   }
 
   avgTime(times: string[]): string {
-    console.log(times, 'times');
     if (!Array.isArray(times)) {
       // console.log('Input is not array');
       return '00:00:00';
@@ -101,7 +97,6 @@ export class ProfileResolver {
     }
 
     if (Array.isArray(times) && times.length > 0) {
-      console.log('All conditions are true :D');
       const totalMilliseconds = times.reduce((acc, time) => {
         const [hours, minutes, seconds] = time.split(':').map(Number);
         return acc + hours * 3600000 + minutes * 60000 + seconds * 1000;
@@ -120,7 +115,6 @@ export class ProfileResolver {
   }
 
   calculateTechCoast(time: string) {
-    console.log(time, 'test');
     const [hh, mm, ss] = time.split(':').map(Number);
     const totalMilliseconds = hh * 3600000 + mm * 60000 + ss * 1000;
     const totalHours = totalMilliseconds / 3600000;
@@ -132,22 +126,34 @@ export class ProfileResolver {
   async getTicketByProfile() {
     let dataDiag = await this.profileService.getTicketByProfileDiag();
     let dataRep = await this.profileService.getTicketByProfileRep();
+    console.log(dataDiag, 'Diagnostique ');
+    console.log(dataRep, 'Reparation');
+
     // Combine the data from both arrays
+    /**
+     * !TODO to check undefined variable (totalRep)
+     */
     const combinedData = dataDiag.map((diag) => {
       const rep = dataRep.find((rep) => rep.techName === diag.techName);
+      console.log(rep, 'rep');
       let diagCost = this.sumTimes(diag.totalDiag);
       let repCost = this.sumTimes(rep.totalRep);
       return {
         techName: diag.techName,
-        totalDiag: this.sumTimes(diag.totalDiag),
-        totalRep: this.sumTimes(rep.totalRep),
+        totalDiag: this.sumTimes(diag.totalDiag)
+          ? this.sumTimes(diag.totalDiag)
+          : '0',
+        totalRep: this.sumTimes(rep.totalRep)
+          ? this.sumTimes(rep.totalRep)
+          : '0',
         techCostDiag: this.calculateTechCoast(diagCost),
         techCostRep: this.calculateTechCoast(repCost),
         moyRep: this.avgTime(rep.totalRep),
         moyDiag: this.avgTime(diag.totalDiag),
       };
     });
-    console.log(combinedData, 'res');
+
+    console.log('combi', combinedData);
     return combinedData;
   }
 
