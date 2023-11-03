@@ -177,6 +177,7 @@ export class TicketService {
               quantity: item.quantity,
               package: item.package,
               pdfComposant: this.convertFile(item.pdfComposant),
+              linkProvider: item.linkProvider,
             })),
           },
         },
@@ -958,6 +959,18 @@ export class TicketService {
       })
       .catch((err) => {
         throw err;
+      });
+  }
+
+  getTicketbyId(id: string) {
+    return this.ticketModel
+      .findById(id)
+      .then((res) => {
+        console.log(res, 'ticket by id');
+        return res;
+      })
+      .catch((err) => {
+        return err;
       });
   }
 }

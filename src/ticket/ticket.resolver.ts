@@ -328,4 +328,8 @@ export class TicketResolver {
   filterGain(@Args('filter') filterGain: Filter) {
     return this.ticketService.filterGain(filterGain);
   }
+  @Mutation(() => Ticket)
+  getTicketById(@Args('id') id: string) {
+    return this.ticketService.getTicketbyId(id);
+  }
 }

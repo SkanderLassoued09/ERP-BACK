@@ -22,6 +22,8 @@ export class ComposantsUpdate {
   package: string;
   @Field({ nullable: true })
   pdfComposant: string;
+  @Field({ nullable: true })
+  linkProvider: string;
 }
 @InputType()
 export class UpdateTicketInput {
