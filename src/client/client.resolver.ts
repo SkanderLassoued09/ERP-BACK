@@ -14,7 +14,7 @@ export class ClientResolver {
   constructor(private readonly clientService: ClientService) {}
 
   @Mutation(() => Client)
-  createClient(
+  async createClient(
     @Args('createClientInput') createClientInput: CreateClientInput,
     @Args('compClient') type: string,
   ) {

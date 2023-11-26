@@ -6,28 +6,26 @@ export type ClientDocument = Client & Document;
 
 export const ClientSchema = new mongoose.Schema(
   {
+    //Type and id
     _id: String,
-    firstName: String,
-    lastName: String,
-    companyName: String,
+    type: String,
+    //Field in commun
+    region: String,
     email: String,
     phone: String,
     address: String,
-    type: String,
-    region: String,
-    codePostal: String,
-    localOrshore: String,
-    tva: String,
-    etat: String,
+
+    //Simple client fields
+    firstName: String,
+    lastName: String,
+    //Company fields
+    companyName: String,
+    Exoneration: String,
+    raisonSociale: String,
+    activitePrincipale: String,
+    activiteSecondaire: String,
     fax: String,
-    ibanRib: String,
-    swiftBic: String,
-    nattestation: String,
-    codeFiscal: String,
-    conPayment: String,
     website: String,
-    techContact: String,
-    nRegisterCommerce: String,
     achat: {
       fullName: String,
       email: String,
@@ -48,50 +46,44 @@ export const ClientSchema = new mongoose.Schema(
 );
 @ObjectType()
 export class Client extends Document {
+  //Type and id
   @Field()
   _id: string;
   @Field({ nullable: true })
-  firstName: string;
+  type: string;
+
+  //Field in commun
   @Field({ nullable: true })
-  lastName: string;
+  region: string;
+  @Field({ nullable: true })
+  address: string;
   @Field({ nullable: true })
   email: string;
   @Field({ nullable: true })
   phone: string;
+
+  //Simple client fields
   @Field({ nullable: true })
-  address: string;
+  firstName: string;
   @Field({ nullable: true })
-  type: string;
+  lastName: string;
+
+  //Company fields
+  @Field({ nullable: true })
+  activitePrincipale: string;
+  @Field({ nullable: true })
+  activiteSecondaire: string;
+  @Field({ nullable: true })
+  raisonSociale: string;
   @Field({ nullable: true })
   companyName: string;
   @Field({ nullable: true })
-  region: string;
-  @Field({ nullable: true })
-  codePostal: string;
-  @Field({ nullable: true })
-  tva: string;
-  @Field({ nullable: true })
-  etat: string;
+  Exoneration: string;
   @Field({ nullable: true })
   fax: string;
   @Field({ nullable: true })
-  ibanRib: string;
-  @Field({ nullable: true })
-  swiftBic: string;
-  @Field({ nullable: true })
-  nattestation: string;
-  @Field({ nullable: true })
-  codeFiscal: string;
-  @Field({ nullable: true })
-  conPayment: string;
-  @Field({ nullable: true })
   website: string;
-  @Field({ nullable: true })
-  techContact: string;
-  @Field({ nullable: true })
-  nRegisterCommerce: string;
 }
-
 @ObjectType()
 export class ChartType {
   @Field()

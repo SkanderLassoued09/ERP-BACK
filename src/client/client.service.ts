@@ -45,7 +45,7 @@ export class ClientService {
     }
 
     if (type === CLIENT_TYPE.COMPANY) {
-      createClientInput._id = `C${index}`;
+      createClientInput._id = `S${index}`;
       createClientInput.type = CLIENT_TYPE.COMPANY;
       return await new this.clientModel(createClientInput)
         .save()

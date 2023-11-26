@@ -1,4 +1,4 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType, Field } from '@nestjs/graphql';
 
 @InputType()
 export class DetailsClient {
@@ -12,52 +12,41 @@ export class DetailsClient {
 
 @InputType()
 export class CreateClientInput {
+  //Type and id
   @Field({ nullable: true })
   _id: string;
   @Field({ nullable: true })
-  firstName: string;
+  type: string;
+
+  //Field in commun
   @Field({ nullable: true })
-  lastName: string;
+  region: string;
+  @Field({ nullable: true })
+  address: string;
   @Field({ nullable: true })
   email: string;
   @Field({ nullable: true })
   phone: string;
+
+  //Simple client fields
   @Field({ nullable: true })
-  address: string;
+  firstName: string;
   @Field({ nullable: true })
-  type: string;
+  lastName: string;
+
+  //Company fields
+  @Field({ nullable: true })
+  activitePrincipale: string;
+  @Field({ nullable: true })
+  activiteSecondaire: string;
+  @Field({ nullable: true })
+  raisonSociale: string;
   @Field({ nullable: true })
   companyName: string;
   @Field({ nullable: true })
-  region: string;
-  @Field({ nullable: true })
-  codePostal: string;
-  @Field({ nullable: true })
-  tva: string;
-  @Field({ nullable: true })
-  etat: string;
+  Exoneration: string;
   @Field({ nullable: true })
   fax: string;
   @Field({ nullable: true })
-  ibanRib: string;
-  @Field({ nullable: true })
-  swiftBic: string;
-  @Field({ nullable: true })
-  nattestation: string;
-  @Field({ nullable: true })
-  codeFiscal: string;
-  @Field({ nullable: true })
-  conPayment: string;
-  @Field({ nullable: true })
   website: string;
-  @Field({ nullable: true })
-  techContact: string;
-  @Field({ nullable: true })
-  nRegisterCommerce: string;
-  @Field({ nullable: true })
-  achat: DetailsClient;
-  @Field({ nullable: true })
-  financier: DetailsClient;
-  @Field({ nullable: true })
-  technique: DetailsClient;
 }
