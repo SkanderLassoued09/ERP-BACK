@@ -37,8 +37,9 @@ export class TicketResolver {
   }
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Query(() => [Ticket])
-  async getTicketForCoordinator() {
-    return await this.ticketService.getTicketForCoordinator();
+  async getTicketForCoordinator(@Args('filter') filterGain: Filter) {
+    console.log('Filter gain RESOLVERrrrrrrrrrrr', filterGain);
+    return await this.ticketService.getTicketForCoordinator(filterGain);
   }
 
   @Query(() => Ticket, { name: 'ticket' })

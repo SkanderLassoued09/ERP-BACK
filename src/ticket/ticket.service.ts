@@ -96,14 +96,37 @@ export class TicketService {
     });
   }
 
-  async getTicketForCoordinator() {
-    return await this.ticketModel
-      .find({ statusFinal: true }) // { toCoordinator: false }
+  async getTicketForCoordinator(filterGain) {
+    console.log(filterGain.start, 'filter  start');
+    console.log(typeof filterGain.end, 'filter gain end');
+    const startDate =
+      filterGain.start !== (null || 'null') ? new Date(filterGain.start) : null;
+    const endDate =
+      filterGain.end !== (null || 'null') ? new Date(filterGain.end) : null;
+
+    let match = {};
+    if (startDate && endDate === null) {
+      match['$gte'] = startDate;
+    }
+
+    if (startDate && endDate) {
+      match['$gte'] = startDate;
+      match['$lte'] = endDate;
+    }
+
+    console.log(match, 'condition');
+    return this.ticketModel
+      .find({
+        // Use createdAt field for date filtering
+        createdAt: match,
+      })
+      .exec()
       .then((res) => {
+        console.log(res, 'res');
         return res;
       })
       .catch((err) => {
-        return err;
+        throw err;
       });
   }
 

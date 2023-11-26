@@ -18,11 +18,11 @@ export class CreateClientInput {
   firstName: string;
   @Field({ nullable: true })
   lastName: string;
-  @Field()
+  @Field({ nullable: true })
   email: string;
-  @Field()
+  @Field({ nullable: true })
   phone: string;
-  @Field()
+  @Field({ nullable: true })
   address: string;
   @Field({ nullable: true })
   type: string;
