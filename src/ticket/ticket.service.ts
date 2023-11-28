@@ -955,9 +955,15 @@ export class TicketService {
     console.log(filterGain.start, 'filter  start');
     console.log(typeof filterGain.end, 'filter gain end');
     const startDate =
-      filterGain.start !== (null || 'null') ? new Date(filterGain.start) : null;
+      filterGain.start !==
+      (null || 'null' || 'undefined' || typeof filterGain.end === undefined)
+        ? new Date(filterGain.start)
+        : null;
     const endDate =
-      filterGain.end !== (null || 'null') ? new Date(filterGain.end) : null;
+      filterGain.end !==
+      (null || 'null' || 'undefined' || typeof filterGain.end === undefined)
+        ? new Date(filterGain.end)
+        : null;
 
     let match = {};
     if (startDate && endDate === null) {
