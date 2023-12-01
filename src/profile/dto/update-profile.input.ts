@@ -4,7 +4,6 @@ import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 @InputType()
 export class UpdateProfileInput {
   @Field({ nullable: true })
-  @Field({ nullable: true })
   firstName: string;
   @Field({ nullable: true })
   lastName: string;

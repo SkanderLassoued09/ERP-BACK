@@ -3,7 +3,6 @@ import { ClientService } from './client.service';
 import { CalendarChart, ChartType, Client } from './entities/client.entity';
 import { CreateClientInput } from './dto/create-client.input';
 import { UpdateClientInput } from './dto/update-client.input';
-import { Role, Roles } from 'src/ticket/role-decorator';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
 import { RolesGuard } from 'src/auth/role-guard';
@@ -20,14 +19,7 @@ export class ClientResolver {
   ) {
     return this.clientService.create(createClientInput, type);
   }
-  // @Roles(Role.ADMIN_MANAGER, Role.ADMIN_TECH)
-  // @UseGuards(JwtAuthGuard, RolesGuard)
-  // @Query(() => [Client])
-  // async getAllClientCompany() {
-  //   return await this.clientService.getAllClientCompany();
-  // }
 
-  // @Roles(Role.ADMIN_MANAGER, Role.ADMIN_TECH,Role.MANAGER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Query(() => [Client])
   async getAllClient() {
@@ -61,15 +53,26 @@ export class ClientResolver {
     return this.clientService.findOne(id);
   }
 
-  @Mutation(() => Client)
+  @Mutation(() => Boolean)
   updateClient(
+    @Args('_id') _id: string,
     @Args('updateClientInput') updateClientInput: UpdateClientInput,
   ) {
-    return this.clientService.update(updateClientInput.id, updateClientInput);
+    const update = this.clientService.updateClient(_id, updateClientInput);
+    if (update) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  @Mutation(() => Client)
-  removeClient(@Args('id', { type: () => Int }) id: number) {
-    return this.clientService.remove(id);
+  @Mutation(() => Boolean)
+  deleteClient(@Args('_id') _id: string) {
+    const update = this.clientService.deleteClient(_id);
+    if (update) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

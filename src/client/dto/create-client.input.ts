@@ -1,12 +1,12 @@
-import { InputType, Field } from '@nestjs/graphql';
+import { InputType, Field, ObjectType } from '@nestjs/graphql';
 
 @InputType()
-export class DetailsClient {
-  @Field()
+export class DetailsClientInput {
+  @Field({ nullable: true })
   fullName: string;
-  @Field()
+  @Field({ nullable: true })
   email: string;
-  @Field()
+  @Field({ nullable: true })
   phone: string;
 }
 
@@ -17,6 +17,8 @@ export class CreateClientInput {
   _id: string;
   @Field({ nullable: true })
   type: string;
+  @Field({ defaultValue: false })
+  isDeleted: boolean;
 
   //Field in commun
   @Field({ nullable: true })
@@ -49,4 +51,13 @@ export class CreateClientInput {
   fax: string;
   @Field({ nullable: true })
   website: string;
+  @Field(() => DetailsClientInput, { nullable: true })
+  achat: DetailsClientInput;
+  @Field(() => DetailsClientInput, { nullable: true })
+  financier: DetailsClientInput;
+  @Field(() => DetailsClientInput, { nullable: true })
+  technique: DetailsClientInput;
 }
+/**
+ *
+ */

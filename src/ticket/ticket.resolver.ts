@@ -10,7 +10,7 @@ import {
   UpdateTicketInput,
   UpdateTicketManager,
 } from './dto/update-ticket.input';
-import { Logger, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
 import { Role, Roles } from './role-decorator';
 import { RolesGuard } from 'src/auth/role-guard';
@@ -37,9 +37,8 @@ export class TicketResolver {
   }
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Query(() => [Ticket])
-  async getTicketForCoordinator(@Args('filter') filterGain: Filter) {
-    console.log('Filter gain RESOLVERrrrrrrrrrrr', filterGain);
-    return await this.ticketService.getTicketForCoordinator(filterGain);
+  async getTicketForCoordinator() {
+    return await this.ticketService.getTicketForCoordinator();
   }
 
   @Query(() => Ticket, { name: 'ticket' })
@@ -327,8 +326,6 @@ export class TicketResolver {
 
   @Mutation(() => [Ticket])
   filterGain(@Args('filter') filterGain: Filter) {
-    const logger = new Logger();
-    logger.log('filerGain-----------', filterGain);
     return this.ticketService.filterGain(filterGain);
   }
   @Mutation(() => Ticket)

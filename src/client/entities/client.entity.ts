@@ -1,14 +1,24 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { Schema } from '@nestjs/mongoose';
+import { ObjectType, Field } from '@nestjs/graphql';
 import mongoose, { Document } from 'mongoose';
 
 export type ClientDocument = Client & Document;
+
+@ObjectType()
+export class DetailsClient {
+  @Field({ nullable: true })
+  fullName: string;
+  @Field({ nullable: true })
+  email: string;
+  @Field({ nullable: true })
+  phone: string;
+}
 
 export const ClientSchema = new mongoose.Schema(
   {
     //Type and id
     _id: String,
     type: String,
+    isDeleted: Boolean,
     //Field in commun
     region: String,
     email: String,
@@ -51,7 +61,8 @@ export class Client extends Document {
   _id: string;
   @Field({ nullable: true })
   type: string;
-
+  @Field()
+  isDeleted: boolean;
   //Field in commun
   @Field({ nullable: true })
   region: string;
@@ -83,7 +94,14 @@ export class Client extends Document {
   fax: string;
   @Field({ nullable: true })
   website: string;
+  @Field(() => DetailsClient, { nullable: true })
+  achat: DetailsClient;
+  @Field(() => DetailsClient, { nullable: true })
+  financier: DetailsClient;
+  @Field(() => DetailsClient, { nullable: true })
+  technique: DetailsClient;
 }
+
 @ObjectType()
 export class ChartType {
   @Field()

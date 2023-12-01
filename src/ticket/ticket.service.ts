@@ -49,22 +49,28 @@ export class TicketService {
 
   async create(createTicketInput: CreateTicketInput) {
     console.log(createTicketInput, 'add service');
-    const extension = getFileExtension(createTicketInput.image);
-    console.log(createTicketInput.image, 'bufferr11');
-    const buffer = Buffer.from(createTicketInput.image.split(',')[1], 'base64');
-    const randompdfFile = randomstring.generate({
-      length: 12,
-      charset: 'alphabetic',
-    });
-    fs.writeFileSync(
-      join(__dirname, `../../pdf/${randompdfFile}.${extension}`),
-      buffer,
-    );
     const index = await this.generateClientId();
     console.log('index ticket', index);
     createTicketInput._id = `T${index}`;
     console.log(createTicketInput._id, 'for saving');
-    createTicketInput.image = `${randompdfFile}.${extension}`;
+    if (createTicketInput.pdfPath) {
+      const extension = getFileExtension(createTicketInput.image);
+      console.log(createTicketInput.image, 'bufferr11');
+      const buffer = Buffer.from(
+        createTicketInput.image.split(',')[1],
+        'base64',
+      );
+      const randompdfFile = randomstring.generate({
+        length: 12,
+        charset: 'alphabetic',
+      });
+      fs.writeFileSync(
+        join(__dirname, `../../pdf/${randompdfFile}.${extension}`),
+        buffer,
+      );
+      createTicketInput.image = `${randompdfFile}.${extension}`;
+    }
+
     console.log(createTicketInput.image, 'image');
     return await new this.ticketModel(createTicketInput)
       .save()
@@ -96,37 +102,14 @@ export class TicketService {
     });
   }
 
-  async getTicketForCoordinator(filterGain) {
-    console.log(filterGain.start, 'filter  start');
-    console.log(typeof filterGain.end, 'filter gain end');
-    const startDate =
-      filterGain.start !== (null || 'null') ? new Date(filterGain.start) : null;
-    const endDate =
-      filterGain.end !== (null || 'null') ? new Date(filterGain.end) : null;
-
-    let match = {};
-    if (startDate && endDate === null) {
-      match['$gte'] = startDate;
-    }
-
-    if (startDate && endDate) {
-      match['$gte'] = startDate;
-      match['$lte'] = endDate;
-    }
-
-    console.log(match, 'condition');
-    return this.ticketModel
-      .find({
-        // Use createdAt field for date filtering
-        createdAt: match,
-      })
-      .exec()
+  async getTicketForCoordinator() {
+    return await this.ticketModel
+      .find({ statusFinal: true }) // { toCoordinator: false }
       .then((res) => {
-        console.log(res, 'res');
         return res;
       })
       .catch((err) => {
-        throw err;
+        return err;
       });
   }
 
@@ -955,15 +938,9 @@ export class TicketService {
     console.log(filterGain.start, 'filter  start');
     console.log(typeof filterGain.end, 'filter gain end');
     const startDate =
-      filterGain.start !==
-      (null || 'null' || 'undefined' || typeof filterGain.end === undefined)
-        ? new Date(filterGain.start)
-        : null;
+      filterGain.start !== (null || 'null') ? new Date(filterGain.start) : null;
     const endDate =
-      filterGain.end !==
-      (null || 'null' || 'undefined' || typeof filterGain.end === undefined)
-        ? new Date(filterGain.end)
-        : null;
+      filterGain.end !== (null || 'null') ? new Date(filterGain.end) : null;
 
     let match = {};
     if (startDate && endDate === null) {

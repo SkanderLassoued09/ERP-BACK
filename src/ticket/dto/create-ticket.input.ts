@@ -118,5 +118,5 @@ export class Filter {
   @Field()
   start: string;
   @Field({ nullable: true })
-  end: string;
+  end: string | null;
 }

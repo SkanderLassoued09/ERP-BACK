@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { Client } from './entities/client.entity';
 
 import { CLIENT_TYPE } from './clientType';
+import { find } from 'rxjs';
 
 @Injectable()
 export class ClientService {
@@ -33,7 +34,7 @@ export class ClientService {
     console.log('from function', index);
     if (type === CLIENT_TYPE.CLIENT) {
       createClientInput._id = `C${index}`;
-
+      createClientInput.isDeleted = false;
       createClientInput.type = CLIENT_TYPE.CLIENT;
 
       return await new this.clientModel(createClientInput)
@@ -46,6 +47,7 @@ export class ClientService {
 
     if (type === CLIENT_TYPE.COMPANY) {
       createClientInput._id = `S${index}`;
+      createClientInput.isDeleted = false;
       createClientInput.type = CLIENT_TYPE.COMPANY;
       return await new this.clientModel(createClientInput)
         .save()
@@ -110,16 +112,16 @@ export class ClientService {
       });
   }
 
-  async getAllClientCompany() {
-    return await this.clientModel.find({}).then((res) => {
-      console.log(res, 'client');
-      return res;
-    });
-  }
+  // async getAllClientCompany() {
+  //   return await this.clientModel.find({ isDeleted: false }).then((res) => {
+  //     console.log(res, 'client');
+  //     return res;
+  //   });
+  // }
 
   async getListOfClient() {
     return await this.clientModel
-      .find({ type: CLIENT_TYPE.CLIENT })
+      .find({ type: CLIENT_TYPE.CLIENT, isDeleted: false })
       .then((res) => {
         console.log(res, 'client');
         return res;
@@ -127,9 +129,11 @@ export class ClientService {
   }
 
   async getListOfCompany() {
+    console.log('list of company');
     return await this.clientModel
-      .find({ type: CLIENT_TYPE.COMPANY })
+      .find({ type: CLIENT_TYPE.COMPANY, isDeleted: false })
       .then((res) => {
+        console.log('this is res =>', res);
         return res;
       });
   }
@@ -240,10 +244,56 @@ export class ClientService {
       });
   }
 
-  update(id: number, updateClientInput: UpdateClientInput) {
-    return `This action updates a #${id} client`;
+  updateClient(_id: string, updateClientInput: UpdateClientInput) {
+    console.log(updateClientInput, 'updateClientInput');
+    return this.clientModel
+      .updateOne(
+        { _id },
+        {
+          $set: {
+            firstName: updateClientInput.firstName,
+            lastName: updateClientInput.lastName,
+            phone: updateClientInput.phone,
+            region: updateClientInput.region,
+            address: updateClientInput.address,
+            email: updateClientInput.email,
+            activitePrincipale: updateClientInput.activitePrincipale,
+            activiteSecondaire: updateClientInput.activiteSecondaire,
+            raisonSociale: updateClientInput.raisonSociale,
+            companyName: updateClientInput.companyName,
+            Exoneration: updateClientInput.Exoneration,
+            fax: updateClientInput.fax,
+            website: updateClientInput.website,
+          },
+        },
+      )
+      .then((res) => {
+        console.log('client update', res);
+        return res;
+      })
+      .catch((err) => {
+        console.log('err', err);
+        return err;
+      });
   }
 
+  async deleteClient(_id: string) {
+    return await this.clientModel
+      .updateOne(
+        { _id },
+        {
+          $set: {
+            isDeleted: true,
+          },
+        },
+      )
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        console.log('err');
+      });
+  }
   remove(id: number) {
     return `This action removes a #${id} client`;
   }
