@@ -63,7 +63,16 @@ export class LocationService {
     return `This action updates a #${id} location`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} location`;
+  async deletLocation(_id: string) {
+    return await this.locationModel
+      .deleteOne({ _id })
+      .then((res) => {
+        console.log('location deleted', _id);
+        return true;
+      })
+      .catch((err) => {
+        console.log('err');
+        return false;
+      });
   }
 }

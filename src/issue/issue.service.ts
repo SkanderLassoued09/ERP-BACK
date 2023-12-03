@@ -80,11 +80,16 @@ export class IssueService {
     return `This action returns a #${id} issue`;
   }
 
-  update(id: number, updateIssueInput: UpdateIssueInput) {
-    return `This action updates a #${id} issue`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} issue`;
+  async deletedIssue(_id: string) {
+    return await this.issueModel
+      .deleteOne({ _id })
+      .then((res) => {
+        console.log('issue deleted', _id);
+        return true;
+      })
+      .catch((err) => {
+        console.log('err');
+        return false;
+      });
   }
 }

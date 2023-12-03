@@ -37,8 +37,13 @@ export class LocationResolver {
     );
   }
 
-  @Mutation(() => Location)
-  removeLocation(@Args('id', { type: () => Int }) id: number) {
-    return this.locationService.remove(id);
+  @Mutation(() => Boolean)
+  removeLocation(@Args('_id') _id: string): Promise<boolean> {
+    try {
+      return this.locationService.deletLocation(_id);
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to delete Location');
+    }
   }
 }

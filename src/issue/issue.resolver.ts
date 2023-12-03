@@ -23,13 +23,13 @@ export class IssueResolver {
     return this.issueService.findOne(id);
   }
 
-  @Mutation(() => Issue)
-  updateIssue(@Args('updateIssueInput') updateIssueInput: UpdateIssueInput) {
-    return this.issueService.update(updateIssueInput.id, updateIssueInput);
-  }
-
-  @Mutation(() => Issue)
-  removeIssue(@Args('id', { type: () => Int }) id: number) {
-    return this.issueService.remove(id);
+  @Mutation(() => Boolean)
+  async removeIssue(@Args('_id') _id: string): Promise<boolean> {
+    try {
+      return this.issueService.deletedIssue(_id);
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to delete issue');
+    }
   }
 }
