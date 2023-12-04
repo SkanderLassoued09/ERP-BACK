@@ -277,6 +277,19 @@ export class ClientService {
       });
   }
 
+  async updateObjectField(_id: string, fieldName: string, value: string) {
+    const updateQuery: any = {};
+    updateQuery[fieldName] = value;
+    return this.clientModel
+      .updateOne({ _id }, { $set: updateQuery })
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
+
   async deleteClient(_id: string) {
     return await this.clientModel
       .updateOne(

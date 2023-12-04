@@ -75,4 +75,18 @@ export class ClientResolver {
       return false;
     }
   }
+
+  @Mutation(() => Boolean)
+  updateField(
+    @Args('_id') _id: string,
+    @Args('fieldName') fieldName: string,
+    @Args('value') value: string,
+  ) {
+    const update = this.clientService.updateObjectField(_id, fieldName, value);
+    if (update) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
