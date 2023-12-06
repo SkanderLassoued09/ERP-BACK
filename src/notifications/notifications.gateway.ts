@@ -26,14 +26,18 @@ export class NotificationsGateway
     this.logger.log('Disconnect', client);
   }
 
+  /**
+   *
+   * ! to do later
+   */
+
   @SubscribeMessage('send-ticket')
   sendTicket(client: Socket, payload: any) {
-    console.log(payload, 'Test purpuse');
-
     let notification = {
       title: payload.designiation,
       assignedTo: payload.assignedTo,
     };
+    console.log(payload, 'payload socket');
     this.ticketService.create(payload);
     this.server.emit('ticket', notification);
   }

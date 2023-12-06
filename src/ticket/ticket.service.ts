@@ -48,12 +48,13 @@ export class TicketService {
   }
 
   async create(createTicketInput: CreateTicketInput) {
-    console.log(createTicketInput, 'add service');
+    console.log(createTicketInput, 'add Ticket service');
     const index = await this.generateClientId();
     console.log('index ticket', index);
     createTicketInput._id = `T${index}`;
     console.log(createTicketInput._id, 'for saving');
-    if (createTicketInput.pdfPath) {
+    if (createTicketInput.image) {
+      console.log(createTicketInput.image, 'path');
       const extension = getFileExtension(createTicketInput.image);
       console.log(createTicketInput.image, 'bufferr11');
       const buffer = Buffer.from(
@@ -69,19 +70,29 @@ export class TicketService {
         buffer,
       );
       createTicketInput.image = `${randompdfFile}.${extension}`;
+      console.log(createTicketInput.image, 'image');
+      return await new this.ticketModel(createTicketInput)
+        .save()
+        .then((res) => {
+          console.log(res, 'ticket added');
+          return res;
+        })
+        .catch((err) => {
+          console.log(err, 'ticket error');
+          return err;
+        });
+    } else {
+      return await new this.ticketModel(createTicketInput)
+        .save()
+        .then((res) => {
+          console.log(res, 'ticket added');
+          return res;
+        })
+        .catch((err) => {
+          console.log(err, 'ticket error');
+          return err;
+        });
     }
-
-    console.log(createTicketInput.image, 'image');
-    return await new this.ticketModel(createTicketInput)
-      .save()
-      .then((res) => {
-        console.log(res, 'ticket added');
-        return res;
-      })
-      .catch((err) => {
-        console.log(err, 'ticket error');
-        return err;
-      });
   }
 
   async checkedByCoordinator(_id: string) {
@@ -373,7 +384,7 @@ export class TicketService {
         return err;
       });
     //  -------------------------------------------------
-    let tech = await this.ticketModel
+    let admintech = await this.ticketModel
       .find({
         assignedTo: name,
         status: { $ne: STATUS_TICKET.FINISHED },
@@ -404,6 +415,39 @@ export class TicketService {
         return err;
       });
 
+    // --------
+    let tech = await this.ticketModel
+      .find({
+        assignedTo: name,
+        status: { $ne: STATUS_TICKET.FINISHED },
+        $and: [
+          {
+            $or: [{ isOpenByTech: false }, { isReparable: true }],
+          },
+        ],
+      })
+      .sort({ createdAt: -1 })
+      .limit(3)
+      .then((res) => {
+        if (returnTicket.length > 0) {
+          console.log('ticket is returned entred');
+          let [returnObj] = returnTicket;
+          returnObj['isReadyForDiag'] = true;
+          console.log(returnObj, 'spreaded arr');
+          res.shift();
+          res.unshift(returnObj);
+          return res;
+        } else if (returnTicket) {
+          console.log('FIFO start');
+          this.getOldestOneTicket(res);
+          return this.getOldestOneTicket(res);
+        }
+      })
+      .catch((err) => {
+        return err;
+      });
+    // --------
+
     let magasin = await this.ticketModel
       .find({ toMagasin: true })
       .sort({ createdAt: -1 })
@@ -416,7 +460,7 @@ export class TicketService {
 
     if (
       role === ROLE.ADMIN_MANAGER ||
-      role === ROLE.ADMIN_TECH ||
+      // role === ROLE.ADMIN_TECH ||
       role === ROLE.MANAGER
     ) {
       return admin;
@@ -424,6 +468,9 @@ export class TicketService {
 
     if (role === ROLE.TECH) {
       return tech;
+    }
+    if (role === ROLE.ADMIN_TECH) {
+      return admintech;
     }
 
     if (role === ROLE.MAGASIN) {
@@ -452,17 +499,6 @@ export class TicketService {
 
   remove(id: number) {
     return `This action removes a #${id} ticket`;
-  }
-
-  async updateGlag() {
-    return await this.ticketModel.updateMany(
-      {},
-      {
-        $set: {
-          isOpenByTech: false,
-        },
-      },
-    );
   }
 
   async getTicketMagasinFinie() {

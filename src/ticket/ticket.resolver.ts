@@ -26,6 +26,7 @@ export class TicketResolver {
   async createTicket(
     @Args('createTicketInput') createTicketInput: CreateTicketInput,
   ) {
+    console.log(createTicketInput, 'In resolver ticket');
     return await this.ticketService.create(createTicketInput);
   }
 
@@ -156,11 +157,6 @@ export class TicketResolver {
     } else {
       return false;
     }
-  }
-
-  @Mutation(() => Ticket)
-  update() {
-    return this.ticketService.updateGlag();
   }
 
   // @Roles(Role.ADMIN_MANAGER,Role.ADMIN_TECH)
