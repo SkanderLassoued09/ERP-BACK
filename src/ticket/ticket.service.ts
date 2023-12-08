@@ -193,7 +193,12 @@ export class TicketService {
               nameComposant: item.nameComposant,
               quantity: item.quantity,
               package: item.package,
-              pdfComposant: this.convertFile(item.pdfComposant),
+              pdfComposant:
+                this.convertFile(item.pdfComposant) !== '' ||
+                typeof this.convertFile(item.pdfComposant) !== undefined ||
+                this.convertFile(item.pdfComposant) !== undefined
+                  ? this.convertFile(item.pdfComposant)
+                  : null,
               linkProvider: item.linkProvider,
             })),
           },

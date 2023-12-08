@@ -45,14 +45,20 @@ export class AuthService {
       // throw new HttpException(
       //   `${email} n'existe pas dans notre base de données`,
       // );
-      throw new HttpException('No username found', HttpStatus.UNAUTHORIZED);
+      throw new HttpException(
+        `Nom d'utilisateur inexistant`,
+        HttpStatus.UNAUTHORIZED,
+      );
     }
     const matchPassword = await bcrypt.compare(password, user.password);
     if (!matchPassword) {
       // throw new UnauthorizedException(
       //   `Le mot de passe que vous avez saisi ne correspond pas à nos données`,
       // );
-      throw new HttpException('No psw found', HttpStatus.UNAUTHORIZED);
+      throw new HttpException(
+        'Mot de passe est incorrect',
+        HttpStatus.UNAUTHORIZED,
+      );
     }
 
     if (user) {
