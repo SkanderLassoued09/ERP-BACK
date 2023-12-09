@@ -118,7 +118,7 @@ export class ProfileResolver {
     const [hh, mm, ss] = time.split(':').map(Number);
     const totalMilliseconds = hh * 3600000 + mm * 60000 + ss * 1000;
     const totalHours = totalMilliseconds / 3600000;
-    const totalCost = totalHours * 5;
+    const totalCost = totalHours * 5; // price per hour nezih
     return totalCost.toFixed(3);
   }
 

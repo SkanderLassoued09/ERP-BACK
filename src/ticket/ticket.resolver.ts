@@ -10,13 +10,14 @@ import {
   UpdateTicketInput,
   UpdateTicketManager,
 } from './dto/update-ticket.input';
-import { UseGuards } from '@nestjs/common';
+import { UnauthorizedException, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
 import { Role, Roles } from './role-decorator';
 import { RolesGuard } from 'src/auth/role-guard';
 import { User as CurrentUser } from 'src/auth/profile.decorator';
 import { Profile } from 'src/profile/entities/profile.entity';
 import { IssueChart } from 'src/issue/entities/issue.entity';
+import { ROLE } from 'src/auth/roles';
 
 @Resolver(() => Ticket)
 export class TicketResolver {

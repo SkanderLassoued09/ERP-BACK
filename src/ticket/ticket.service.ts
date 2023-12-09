@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import {
   CreateTicketInput,
   Filter,
@@ -423,7 +423,7 @@ export class TicketService {
     // --------
     let tech = await this.ticketModel
       .find({
-        assignedTo: name,
+        $or: [{ assignedTo: name }, { assignedToRep: name }],
         status: { $ne: STATUS_TICKET.FINISHED },
         $and: [
           {

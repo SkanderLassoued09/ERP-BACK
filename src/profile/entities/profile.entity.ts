@@ -65,6 +65,7 @@ export class TechTickets {
   isTechBusy: boolean;
   @Field()
   username: string;
+
   @Field(() => Int)
   ticketCount: number;
 }

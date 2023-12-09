@@ -114,10 +114,11 @@ export class ProfileService {
             ],
           },
         },
-        // { $unwind: '$ticketByTech' },
+
         {
           $project: {
             _id: '$_id',
+
             username: '$username',
             ticketCount: { $size: '$ticketByTech' },
           },
