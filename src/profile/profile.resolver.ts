@@ -114,16 +114,16 @@ export class ProfileResolver {
     }
   }
 
-  calculateTechCoast(time: string) {
+  calculateTechCoast(time: string, givenPrice: number) {
     const [hh, mm, ss] = time.split(':').map(Number);
     const totalMilliseconds = hh * 3600000 + mm * 60000 + ss * 1000;
     const totalHours = totalMilliseconds / 3600000;
-    const totalCost = totalHours * 5; // price per hour nezih
+    const totalCost = totalHours * givenPrice; // price per hour nezih
     return totalCost.toFixed(3);
   }
 
   @Query(() => [GetTicketByProfile])
-  async getTicketByProfile() {
+  async getTicketByProfile(@Args('givenPrice') givenPrice: number) {
     let dataDiag = await this.profileService.getTicketByProfileDiag();
     let dataRep = await this.profileService.getTicketByProfileRep();
     console.log(dataDiag, 'Diagnostique ');
@@ -146,8 +146,8 @@ export class ProfileResolver {
         totalRep: this.sumTimes(rep.totalRep)
           ? this.sumTimes(rep.totalRep)
           : '0',
-        techCostDiag: this.calculateTechCoast(diagCost),
-        techCostRep: this.calculateTechCoast(repCost),
+        techCostDiag: this.calculateTechCoast(diagCost, givenPrice),
+        techCostRep: this.calculateTechCoast(repCost, givenPrice),
         moyRep: this.avgTime(rep.totalRep),
         moyDiag: this.avgTime(diag.totalDiag),
       };

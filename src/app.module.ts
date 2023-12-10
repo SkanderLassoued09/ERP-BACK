@@ -16,6 +16,7 @@ import { NotificationHatewayModule } from './notifications/notification.module';
 import { ComposantModule } from './composant/composant.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { PriceTechModule } from './price-tech/price-tech.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { join } from 'path';
     CategoryModule,
     NotificationHatewayModule,
     ComposantModule,
+    PriceTechModule,
   ],
   controllers: [AppController],
   providers: [AppService],
