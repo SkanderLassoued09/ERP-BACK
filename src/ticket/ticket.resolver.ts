@@ -1,16 +1,17 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { TicketService } from './ticket.service';
-import { Ticket, Totality } from './entities/ticket.entity';
+import { ResponseDelete, Ticket, Totality } from './entities/ticket.entity';
 import {
   CreateTicketInput,
   Filter,
   MagasinUpdateData,
 } from './dto/create-ticket.input';
 import {
+  UpdateTicket,
   UpdateTicketInput,
   UpdateTicketManager,
 } from './dto/update-ticket.input';
-import { UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Logger, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
 import { Role, Roles } from './role-decorator';
 import { RolesGuard } from 'src/auth/role-guard';
@@ -328,5 +329,45 @@ export class TicketResolver {
   @Mutation(() => Ticket)
   getTicketById(@Args('id') id: string) {
     return this.ticketService.getTicketbyId(id);
+  }
+
+  @Mutation(() => Boolean)
+  async updateTicketcField(@Args('updateTicket') updateTicket: UpdateTicket) {
+    const update = await this.ticketService.updateTicket(updateTicket);
+    if (update) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Mutation(() => ResponseDelete)
+  async deleteTicket(
+    @Args('_id') _id: string,
+    @CurrentUser() profile: Profile,
+  ) {
+    try {
+      if (profile.role === ROLE.ADMIN_MANAGER) {
+        const deleteTicket = await this.ticketService.deleteTicket(
+          _id,
+          profile.role,
+        );
+
+        if (deleteTicket.deletedCount === 1) {
+          return { deleteTicket };
+        } else {
+          return {
+            responseError: { message: 'Failed to delete ticket', code: 500 },
+          };
+        }
+      } else {
+        // deleteTicket: null, // Set deleteTicket to null for unauthorized user
+        throw new UnauthorizedException();
+      }
+    } catch (error) {
+      console.log(error);
+      throw new UnauthorizedException();
+    }
   }
 }

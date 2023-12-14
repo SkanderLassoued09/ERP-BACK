@@ -1,4 +1,4 @@
-import { InputType, Field, Int } from '@nestjs/graphql';
+import { InputType, Field, Int, ObjectType } from '@nestjs/graphql';
 
 @InputType()
 export class ComposantsUpdate {
@@ -82,4 +82,18 @@ export class UpdateTicketManager {
   facture: string;
   @Field({ nullable: true })
   Devis: string;
+}
+
+@InputType()
+export class UpdateTicket {
+  @Field()
+  _id: string;
+  @Field()
+  numero: string;
+  @Field()
+  emplacement: string;
+  @Field()
+  designiation: string;
+  @Field()
+  title: string;
 }

@@ -5,6 +5,7 @@ import {
   MagasinUpdateData,
 } from './dto/create-ticket.input';
 import {
+  UpdateTicket,
   UpdateTicketInput,
   UpdateTicketManager,
 } from './dto/update-ticket.input';
@@ -1017,6 +1018,42 @@ export class TicketService {
         return res;
       })
       .catch((err) => {
+        return err;
+      });
+  }
+
+  async deleteTicket(_id: string, role: string) {
+    return await this.ticketModel
+      .deleteOne({ _id })
+      .then((res) => {
+        console.log(res, 'res');
+        return res;
+      })
+      .catch((err) => {
+        console.log(err, 'err');
+        return err;
+      });
+  }
+
+  async updateTicket(updateTicket: UpdateTicket) {
+    return this.ticketModel
+      .updateOne(
+        { _id: updateTicket._id },
+        {
+          $set: {
+            numero: updateTicket.numero,
+            emplacement: updateTicket.emplacement,
+            designiation: updateTicket.designiation,
+            title: updateTicket.title,
+          },
+        },
+      )
+      .then((res) => {
+        console.log(res, 'res');
+        return res;
+      })
+      .catch((err) => {
+        console.log(err, 'err');
         return err;
       });
   }

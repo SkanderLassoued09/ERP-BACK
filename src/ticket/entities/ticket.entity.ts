@@ -223,3 +223,26 @@ export class Totality {
   @Field()
   count: number;
 }
+
+@ObjectType()
+export class ResponseError {
+  @Field()
+  message: string;
+  @Field()
+  code: number;
+}
+
+@ObjectType()
+export class Delete_Ticket {
+  @Field()
+  acknowledged: boolean;
+  @Field()
+  deletedCount: number;
+}
+@ObjectType()
+export class ResponseDelete {
+  @Field(() => Delete_Ticket, { nullable: true })
+  deleteTicket?: Delete_Ticket | null;
+  @Field(() => ResponseError, { nullable: true })
+  responseError?: ResponseError | null;
+}
