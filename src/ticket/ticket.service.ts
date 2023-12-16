@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import {
   CreateTicketInput,
   Filter,
@@ -49,6 +49,8 @@ export class TicketService {
   }
 
   async create(createTicketInput: CreateTicketInput) {
+    const logger = new Logger('Ticker service');
+    logger.log(createTicketInput, 'ticket from client');
     console.log(createTicketInput, 'add Ticket service');
     const index = await this.generateClientId();
     console.log('index ticket', index);
@@ -126,32 +128,6 @@ export class TicketService {
   }
 
   convertFile(file: any) {
-    // const extension = getFileExtension(
-    //   file.map((el) => {
-    //     return el.pdfComposant;
-    //   }),
-    // );
-    // console.log(
-    //   file.map((el) => {
-    //     return el.pdfComposant;
-    //   }),
-    //   'bufferr11',
-    // );
-
-    // const base64Strings = file.map((item) => item.pdfComposant.split(',')[1]);
-    // const concatenatedBase64 = base64Strings.join('');
-
-    // const buffer = Buffer.from(concatenatedBase64, 'base64');
-    // const randompdfFile = randomstring.generate({
-    //   length: 12,
-    //   charset: 'alphabetic',
-    // });
-    // fs.writeFileSync(
-    //   join(__dirname, `../../pdf/${randompdfFile}.${extension}`),
-    //   buffer,
-    // );
-
-    // return `${randompdfFile}.${extension}`;
     const extension = getFileExtension(file);
     console.log(file, 'file');
     console.log('---------------------------');

@@ -98,6 +98,8 @@ export class Composants {
   @Field({ nullable: true })
   package: string;
   @Field({ nullable: true })
+  linkProvider: string;
+  @Field({ nullable: true })
   pdfComposant: string;
 }
 
