@@ -123,10 +123,16 @@ export class TicketResolver {
   // @Roles(Role.TECH, Role.ADMIN_MANAGER, Role.ADMIN_TECH, Role.MAGASIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Query(() => [Ticket])
-  async getTicketByTech(@CurrentUser() profile: Profile) {
+  async getTicketByTech(
+    @CurrentUser() profile: Profile,
+    @Args('numberOfTicketPerPage') numberOfTicketPerPage: number,
+    @Args('skip') skip: number,
+  ) {
     return await this.ticketService.getTicketByTech(
       profile.username,
       profile.role,
+      numberOfTicketPerPage,
+      skip,
     );
   }
 
