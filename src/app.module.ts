@@ -21,8 +21,8 @@ import { PriceTechModule } from './price-tech/price-tech.module';
 @Module({
   imports: [
     MongooseModule.forRoot(
-      'mongodb+srv://skander009:pAkAJsxUvBbzsIv8@tpedb.yy1h9.mongodb.net/ERP?retryWrites=true&w=majority',
-      // 'mongodb://localhost:27017/erp',
+      // 'mongodb+srv://skander009:pAkAJsxUvBbzsIv8@tpedb.yy1h9.mongodb.net/ERP?retryWrites=true&w=majority',
+      'mongodb://localhost:27017/erp',
     ),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

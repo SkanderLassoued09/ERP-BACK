@@ -349,17 +349,31 @@ export class TicketService {
       });
   }
 
-  async getTicketByTech(name: string, role: string) {
-    console.log('##########################');
+  async getTicketByTech(
+    name: string,
+    role: string,
+    numberOfTicketPerPage: number,
+    page: number,
+  ) {
+    const skip = (page - 1) * numberOfTicketPerPage;
+    // when getting the amount of ticket add them 20 to imptove UI the same thing for skip
+    // numberOfTicketPerPage += 20;
+    // skip += 20;
+    // numberOfTicketPerPage = 30 to improve UI
+    // skip = 30 to skip 30 docs
+
     let returnTicket = await this.getTicketReturned();
-    console.log('Returned ticket is fired', returnTicket);
-    console.log('##########################');
+
     //  -------------------------------------------------
     let admin = await this.ticketModel
       .find({})
       .sort({ createdAt: 1 })
+      .limit(numberOfTicketPerPage)
+      .skip(skip)
 
       .then((res) => {
+        console.log('🍬[res]:', res);
+
         return res;
       })
       .catch((err) => {
