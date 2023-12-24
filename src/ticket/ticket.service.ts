@@ -5,6 +5,7 @@ import {
   MagasinUpdateData,
 } from './dto/create-ticket.input';
 import {
+  UpdateDevisOnlyEntity,
   UpdateTicket,
   UpdateTicketInput,
   UpdateTicketManager,
@@ -675,7 +676,46 @@ export class TicketService {
         });
     }
   }
+  //////////////////
+  // New service for changing only Devis
+  async updateDevisOnly(updateDevisOnlyEntity: UpdateDevisOnlyEntity) {
+    // //---------------------------------------------
+    const extensionDevis = getFileExtension(updateDevisOnlyEntity.Devis);
+    console.log(updateDevisOnlyEntity.Devis);
+    const bufferDevis = Buffer.from(
+      updateDevisOnlyEntity.Devis.split(',')[1],
+      'base64',
+    );
+    const randompdfFileDevis = randomstring.generate({
+      length: 12,
+      charset: 'alphabetic',
+    });
+    fs.writeFileSync(
+      join(__dirname, `../../pdf/${randompdfFileDevis}.${extensionDevis}`),
+      bufferDevis,
+    );
 
+    // //---------------------------------------------
+    console.log('Change the Devis is fired');
+    return await this.ticketModel
+      .updateOne(
+        { _id: updateDevisOnlyEntity._id },
+        {
+          $set: {
+            Devis: `${randompdfFileDevis}.${extensionDevis}`,
+          },
+        },
+      )
+      .then((res) => {
+        console.log(res, 'res Devis buffer');
+        return res;
+      })
+      .catch((err) => {
+        console.log(err, 'err Devis buffer');
+        return err;
+      });
+  }
+  //////////////////
   async setIsReparable(_id, techname: string) {
     return await this.ticketModel
       .updateOne(

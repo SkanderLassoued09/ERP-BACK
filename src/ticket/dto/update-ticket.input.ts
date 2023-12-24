@@ -85,6 +85,14 @@ export class UpdateTicketManager {
 }
 
 @InputType()
+export class UpdateDevisOnlyEntity {
+  @Field({ nullable: true })
+  _id: string;
+  @Field({ nullable: true })
+  Devis: string;
+}
+
+@InputType()
 export class UpdateTicket {
   @Field()
   _id: string;

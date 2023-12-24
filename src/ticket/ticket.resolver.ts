@@ -7,6 +7,7 @@ import {
   MagasinUpdateData,
 } from './dto/create-ticket.input';
 import {
+  UpdateDevisOnlyEntity,
   UpdateTicket,
   UpdateTicketInput,
   UpdateTicketManager,
@@ -209,6 +210,22 @@ export class TicketResolver {
     if (updateManager) {
       return true;
     } else {
+      return false;
+    }
+  }
+
+  //new resolver for the Devis change
+  @Mutation(() => Boolean)
+  async updateDevisOnly(
+    @Args('updateDevisOnly') updateDevisOnlyEntity: UpdateDevisOnlyEntity,
+  ) {
+    try {
+      const updateResult = await this.ticketService.updateDevisOnly(
+        updateDevisOnlyEntity,
+      );
+      return !!updateResult; // Converts truthy/falsy to boolean
+    } catch (error) {
+      console.error('Error updating Devis:', error);
       return false;
     }
   }
