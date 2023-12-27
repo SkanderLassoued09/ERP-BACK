@@ -349,13 +349,8 @@ export class TicketService {
       });
   }
 
-  async getTicketByTech(
-    name: string,
-    role: string,
-    numberOfTicketPerPage: number,
-    page: number,
-  ) {
-    const skip = (page - 1) * numberOfTicketPerPage;
+  async getTicketByTech(name: string, role: string) {
+    // const skip = (page - 1) * numberOfTicketPerPage;
     // when getting the amount of ticket add them 20 to imptove UI the same thing for skip
     // numberOfTicketPerPage += 20;
     // skip += 20;
@@ -368,8 +363,8 @@ export class TicketService {
     let admin = await this.ticketModel
       .find({})
       .sort({ createdAt: 1 })
-      .limit(numberOfTicketPerPage)
-      .skip(skip)
+      // .limit(numberOfTicketPerPage)
+      // .skip(skip)
 
       .then((res) => {
         console.log('🍬[res]:', res);
@@ -967,8 +962,8 @@ export class TicketService {
       });
   }
   filterGain(filterGain: Filter) {
-    console.log(filterGain.start, 'filter  start');
-    console.log(typeof filterGain.end, 'filter gain end');
+    // console.log(filterGain.start, 'filter  start');
+    // console.log(typeof filterGain.end, 'filter gain end');
     const startDate =
       filterGain.start !== (null || 'null') ? new Date(filterGain.start) : null;
     const endDate =
@@ -1046,5 +1041,102 @@ export class TicketService {
         console.log(err, 'err');
         return err;
       });
+  }
+
+  async updateBl(_id: string, file: any) {
+    // to convert
+    const extension = getFileExtension(file);
+    console.log(file, 'bufferr11');
+    const buffer = Buffer.from(file.split(',')[1], 'base64');
+    const randompdfFile = randomstring.generate({
+      length: 12,
+      charset: 'alphabetic',
+    });
+    fs.writeFileSync(
+      join(__dirname, `../../pdf/${randompdfFile}.${extension}`),
+      buffer,
+    );
+
+    const blFile = `${randompdfFile}.${extension}`;
+
+    return this.ticketModel.updateOne(
+      { _id },
+      {
+        $set: {
+          bl: blFile,
+        },
+      },
+    );
+  }
+  async updateBc(_id: string, file: any) {
+    const extension = getFileExtension(file);
+    console.log(file, 'bufferr11');
+    const buffer = Buffer.from(file.split(',')[1], 'base64');
+    const randompdfFile = randomstring.generate({
+      length: 12,
+      charset: 'alphabetic',
+    });
+    fs.writeFileSync(
+      join(__dirname, `../../pdf/${randompdfFile}.${extension}`),
+      buffer,
+    );
+    const bcFile = `${randompdfFile}.${extension}`;
+
+    return this.ticketModel.updateOne(
+      { _id },
+      {
+        $set: {
+          bc: bcFile,
+        },
+      },
+    );
+  }
+  async updateFacture(_id: string, file: any) {
+    const extension = getFileExtension(file);
+    console.log(file, 'bufferr11');
+    const buffer = Buffer.from(file.split(',')[1], 'base64');
+    const randompdfFile = randomstring.generate({
+      length: 12,
+      charset: 'alphabetic',
+    });
+    fs.writeFileSync(
+      join(__dirname, `../../pdf/${randompdfFile}.${extension}`),
+      buffer,
+    );
+    const factureFile = `${randompdfFile}.${extension}`;
+    return this.ticketModel.updateOne(
+      { _id },
+      {
+        $set: {
+          facture: factureFile,
+        },
+      },
+    );
+  }
+
+  async updateDevis(_id: string, file: any) {
+    let devisFile: string;
+    if (file) {
+      const extension = getFileExtension(file);
+      console.log(file, 'bufferr11');
+      const buffer = Buffer.from(file.split(',')[1], 'base64');
+      const randompdfFile = randomstring.generate({
+        length: 12,
+        charset: 'alphabetic',
+      });
+      fs.writeFileSync(
+        join(__dirname, `../../pdf/${randompdfFile}.${extension}`),
+        buffer,
+      );
+      devisFile = `${randompdfFile}.${extension}`;
+    }
+    return this.ticketModel.updateOne(
+      { _id },
+      {
+        $set: {
+          Devis: devisFile,
+        },
+      },
+    );
   }
 }

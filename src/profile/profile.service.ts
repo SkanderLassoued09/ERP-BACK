@@ -26,7 +26,7 @@ export class ProfileService {
   }
 
   updateProfile(_id: string, updateProfileInput: UpdateProfileInput) {
-    console.log(updateProfileInput, 'updateProfileInput');
+    // console.log(updateProfileInput, 'updateProfileInput');
     return this.profileModel
       .updateOne(
         { _id },
@@ -39,11 +39,11 @@ export class ProfileService {
         },
       )
       .then((res) => {
-        console.log('profile update', res);
+        // console.log('profile update', res);
         return res;
       })
       .catch((err) => {
-        console.log('err', err);
+        // console.log('err', err);
         return err;
       });
   }
@@ -62,7 +62,7 @@ export class ProfileService {
         return res;
       })
       .catch((err) => {
-        console.log('err');
+        // console.log('err');
       });
   }
   // for listing profiles
@@ -82,11 +82,11 @@ export class ProfileService {
     return await this.profileModel
       .findOne({ username })
       .then((res) => {
-        console.log('find one auth ', res);
+        // console.log('find one auth ', res);
         return res;
       })
       .catch((err) => {
-        console.log('Err find one auth', err);
+        // console.log('Err find one auth', err);
         return err;
       });
   }
@@ -125,11 +125,11 @@ export class ProfileService {
         },
       ])
       .then((res) => {
-        console.log('join ticket tech', res);
+        // console.log('join ticket tech', res);
         return res;
       })
       .catch((err) => {
-        console.log(err, 'err');
+        // console.log(err, 'err');
         return err;
       });
   }
@@ -166,11 +166,11 @@ export class ProfileService {
         },
       ])
       .then((res) => {
-        console.log(res, 'res');
+        // console.log(res, 'res');
         return res;
       })
       .catch((err) => {
-        console.log(err, 'err');
+        // console.log(err, 'err');
         return err;
       });
   }
