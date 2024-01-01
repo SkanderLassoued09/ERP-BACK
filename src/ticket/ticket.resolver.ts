@@ -402,4 +402,23 @@ export class TicketResolver {
       throw new UnauthorizedException();
     }
   }
+
+  @Mutation(() => Ticket)
+  async updateBl(@Args('_id') _id: string, @Args('file') file: string) {
+    return await this.ticketService.updateBl(_id, file);
+  }
+
+  @Mutation(() => Ticket)
+  async updateBc(@Args('_id') _id: string, @Args('file') file: string) {
+    return await this.ticketService.updateBc(_id, file);
+  }
+  @Mutation(() => Ticket)
+  async updateFacture(@Args('_id') _id: string, @Args('file') file: string) {
+    return await this.ticketService.updateFacture(_id, file);
+  }
+
+  @Mutation(() => Ticket)
+  async updateDevis(@Args('_id') _id: string, @Args('file') file: string) {
+    return await this.ticketService.updateDevis(_id, file);
+  }
 }

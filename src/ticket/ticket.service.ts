@@ -1035,8 +1035,8 @@ export class TicketService {
       });
   }
   filterGain(filterGain: Filter) {
-    console.log(filterGain.start, 'filter  start');
-    console.log(typeof filterGain.end, 'filter gain end');
+    // console.log(filterGain.start, 'filter  start');
+    // console.log(typeof filterGain.end, 'filter gain end');
     const startDate =
       filterGain.start !== (null || 'null') ? new Date(filterGain.start) : null;
     const endDate =
@@ -1114,5 +1114,102 @@ export class TicketService {
         console.log(err, 'err');
         return err;
       });
+  }
+
+  async updateBl(_id: string, file: any) {
+    // to convert
+    const extension = getFileExtension(file);
+    console.log(file, 'bufferr11');
+    const buffer = Buffer.from(file.split(',')[1], 'base64');
+    const randompdfFile = randomstring.generate({
+      length: 12,
+      charset: 'alphabetic',
+    });
+    fs.writeFileSync(
+      join(__dirname, `../../pdf/${randompdfFile}.${extension}`),
+      buffer,
+    );
+
+    const blFile = `${randompdfFile}.${extension}`;
+
+    return this.ticketModel.updateOne(
+      { _id },
+      {
+        $set: {
+          bl: blFile,
+        },
+      },
+    );
+  }
+  async updateBc(_id: string, file: any) {
+    const extension = getFileExtension(file);
+    console.log(file, 'bufferr11');
+    const buffer = Buffer.from(file.split(',')[1], 'base64');
+    const randompdfFile = randomstring.generate({
+      length: 12,
+      charset: 'alphabetic',
+    });
+    fs.writeFileSync(
+      join(__dirname, `../../pdf/${randompdfFile}.${extension}`),
+      buffer,
+    );
+    const bcFile = `${randompdfFile}.${extension}`;
+
+    return this.ticketModel.updateOne(
+      { _id },
+      {
+        $set: {
+          bc: bcFile,
+        },
+      },
+    );
+  }
+  async updateFacture(_id: string, file: any) {
+    const extension = getFileExtension(file);
+    console.log(file, 'bufferr11');
+    const buffer = Buffer.from(file.split(',')[1], 'base64');
+    const randompdfFile = randomstring.generate({
+      length: 12,
+      charset: 'alphabetic',
+    });
+    fs.writeFileSync(
+      join(__dirname, `../../pdf/${randompdfFile}.${extension}`),
+      buffer,
+    );
+    const factureFile = `${randompdfFile}.${extension}`;
+    return this.ticketModel.updateOne(
+      { _id },
+      {
+        $set: {
+          facture: factureFile,
+        },
+      },
+    );
+  }
+
+  async updateDevis(_id: string, file: any) {
+    let devisFile: string;
+    if (file) {
+      const extension = getFileExtension(file);
+      console.log(file, 'bufferr11');
+      const buffer = Buffer.from(file.split(',')[1], 'base64');
+      const randompdfFile = randomstring.generate({
+        length: 12,
+        charset: 'alphabetic',
+      });
+      fs.writeFileSync(
+        join(__dirname, `../../pdf/${randompdfFile}.${extension}`),
+        buffer,
+      );
+      devisFile = `${randompdfFile}.${extension}`;
+    }
+    return this.ticketModel.updateOne(
+      { _id },
+      {
+        $set: {
+          Devis: devisFile,
+        },
+      },
+    );
   }
 }

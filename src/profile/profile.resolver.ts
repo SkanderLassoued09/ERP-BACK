@@ -9,7 +9,7 @@ import {
 import { CreateProfileInput, TokenData } from './dto/create-profile.input';
 import { UpdateProfileInput } from './dto/update-profile.input';
 import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
-import { UseGuards } from '@nestjs/common';
+import { BadRequestException, UseGuards } from '@nestjs/common';
 import { User as CurrentUser } from 'src/auth/profile.decorator';
 import { Role, Roles } from 'src/ticket/role-decorator';
 import { RolesGuard } from 'src/auth/role-guard';
@@ -23,14 +23,14 @@ export class ProfileResolver {
     @Args('createProfileInput') createProfileInput: CreateProfileInput,
   ) {
     let data = await this.profileService.create(createProfileInput);
-    console.log(data, 'in resolver');
+    // console.log(data, 'in resolver');
     return data;
   }
 
   @Query(() => TokenData)
   @UseGuards(JwtAuthGuard)
   getTokenData(@CurrentUser() profile: TokenData) {
-    console.log(profile);
+    // console.log(profile);
     if (profile !== null) {
       return profile;
     }
@@ -126,34 +126,33 @@ export class ProfileResolver {
   async getTicketByProfile(@Args('givenPrice') givenPrice: number) {
     let dataDiag = await this.profileService.getTicketByProfileDiag();
     let dataRep = await this.profileService.getTicketByProfileRep();
-    console.log(dataDiag, 'Diagnostique ');
-    console.log(dataRep, 'Reparation');
 
-    // Combine the data from both arrays
-    /**
-     * !TODO to check undefined variable (totalRep)
-     */
     const combinedData = dataDiag.map((diag) => {
       const rep = dataRep.find((rep) => rep.techName === diag.techName);
-      console.log(rep, 'rep');
-      let diagCost = this.sumTimes(diag.totalDiag);
-      let repCost = this.sumTimes(rep.totalRep);
-      return {
-        techName: diag.techName,
-        totalDiag: this.sumTimes(diag.totalDiag)
-          ? this.sumTimes(diag.totalDiag)
-          : '0',
-        totalRep: this.sumTimes(rep.totalRep)
-          ? this.sumTimes(rep.totalRep)
-          : '0',
-        techCostDiag: this.calculateTechCoast(diagCost, givenPrice),
-        techCostRep: this.calculateTechCoast(repCost, givenPrice),
-        moyRep: this.avgTime(rep.totalRep),
-        moyDiag: this.avgTime(diag.totalDiag),
-      };
+
+      if (diag.totalDiag !== undefined && rep !== undefined) {
+        let diagCost = this.sumTimes(diag.totalDiag || null);
+        let repCost = this.sumTimes(rep.totalRep || null);
+
+        if (diagCost !== null && repCost !== null) {
+          return {
+            techName: diag.techName,
+            totalDiag: this.sumTimes(diag.totalDiag) || '0',
+            totalRep: this.sumTimes(rep.totalRep) || '0',
+            techCostDiag: this.calculateTechCoast(diagCost, givenPrice),
+            techCostRep: this.calculateTechCoast(repCost, givenPrice),
+            moyRep: this.avgTime(rep.totalRep),
+            moyDiag: this.avgTime(diag.totalDiag),
+          };
+        } else {
+          throw new BadRequestException();
+        }
+      } else {
+        throw new BadRequestException();
+      }
     });
 
-    console.log('combi', combinedData);
+    console.log('combinedData', combinedData);
     return combinedData;
   }
 
