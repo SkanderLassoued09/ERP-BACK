@@ -183,7 +183,7 @@ export class TicketService {
     _id: string,
     updateTicketInput: UpdateTicketInput,
   ) {
-    console.log(updateTicketInput, 'data coming');
+    console.log(updateTicketInput, 'data coming from Diagnostique tech');
 
     return this.ticketModel
       .updateOne(
@@ -198,16 +198,13 @@ export class TicketService {
             pdr: updateTicketInput.pdr,
             diagnosticTimeByTech: updateTicketInput.diagnosticTimeByTech,
             issue: updateTicketInput.issue,
-
             toMagasin: true,
             composants: updateTicketInput.composants.map((item) => ({
               nameComposant: item.nameComposant,
               quantity: item.quantity,
               package: item.package,
               pdfComposant:
-                this.convertFile(item.pdfComposant) !== '' ||
-                typeof this.convertFile(item.pdfComposant) !== undefined ||
-                this.convertFile(item.pdfComposant) !== undefined
+                item.pdfComposant !== 'undefined'
                   ? this.convertFile(item.pdfComposant)
                   : null,
               linkProvider: item.linkProvider,
