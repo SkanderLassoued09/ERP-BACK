@@ -36,9 +36,18 @@ export class TicketResolver {
   // @Roles(Role.ADMIN_MANAGER, Role.ADMIN_TECH)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Query(() => [Ticket])
-  async getTickets() {
-    return await this.ticketService.getTickets();
+  async getTickets(
+    @Args('numberOfTicketPerPage') numberOfTicketPerPage: number,
+    @Args('page') page: number,
+  ) {
+    try {
+      return await this.ticketService.getTickets(numberOfTicketPerPage, page);
+    } catch (error) {
+      console.error('Error in getTickets resolver:', error);
+      throw new Error('Error fetching tickets'); // Adjust the error message as needed
+    }
   }
+
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Query(() => [Ticket])
   async getTicketForCoordinator() {
@@ -125,14 +134,14 @@ export class TicketResolver {
   @Query(() => [Ticket])
   async getTicketByTech(
     @CurrentUser() profile: Profile,
-    @Args('numberOfTicketPerPage') numberOfTicketPerPage: number,
-    @Args('skip') skip: number,
+    // @Args('numberOfTicketPerPage') numberOfTicketPerPage: number,
+    // @Args('skip') skip: number,
   ) {
     return await this.ticketService.getTicketByTech(
       profile.username,
       profile.role,
-      numberOfTicketPerPage,
-      skip,
+      // numberOfTicketPerPage,
+      // skip,
     );
   }
 

@@ -109,14 +109,47 @@ export class TicketService {
         return err;
       });
   }
-
-  async getTickets() {
-    return await this.ticketModel.find().then((res) => {
-      console.log(res, 'all ticket');
-      return res;
-    });
+  //Nezih
+  async getTickets(numberOfTicketPerPage: number, page: number) {
+    const skip = (page - 1) * numberOfTicketPerPage;
+    return await this.ticketModel
+      .find({})
+      .limit(numberOfTicketPerPage)
+      .skip(skip)
+      .then((res) => {
+        console.log(res, 'all ticket');
+        return res;
+      });
   }
+  /**
+ * 
+    
+ 
+  ) {
+    
 
+
+    let returnTicket = await this.getTicketReturned();
+
+    //  -------------------------------------------------
+    await this.ticketModel
+      .find({})
+      .sort({ createdAt: 1 })
+      .limit(numberOfTicketPerPage)
+      .skip(skip)
+
+      .then((res) => {
+        console.log('🍬[res]:', res);
+
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+  
+  }
+ * 
+ */
   async getTicketForCoordinator() {
     return await this.ticketModel
       .find({ statusFinal: true }) // { toCoordinator: false }
@@ -350,13 +383,8 @@ export class TicketService {
       });
   }
 
-  async getTicketByTech(
-    name: string,
-    role: string,
-    numberOfTicketPerPage: number,
-    page: number,
-  ) {
-    const skip = (page - 1) * numberOfTicketPerPage;
+  async getTicketByTech(name: string, role: string) {
+    // const skip = (page - 1) * numberOfTicketPerPage;
     // when getting the amount of ticket add them 20 to imptove UI the same thing for skip
     // numberOfTicketPerPage += 20;
     // skip += 20;
@@ -369,8 +397,8 @@ export class TicketService {
     let admin = await this.ticketModel
       .find({})
       .sort({ createdAt: 1 })
-      .limit(numberOfTicketPerPage)
-      .skip(skip)
+      // .limit(numberOfTicketPerPage)
+      // .skip(skip)
 
       .then((res) => {
         console.log('🍬[res]:', res);
