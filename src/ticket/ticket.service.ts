@@ -19,6 +19,7 @@ import * as randomstring from 'randomstring';
 import * as fs from 'fs';
 import { join } from 'path';
 import { start } from 'repl';
+import { PubSub } from 'graphql-subscriptions';
 
 function getFileExtension(base64) {
   const metaData = base64.split(',')[0];
@@ -29,7 +30,10 @@ function getFileExtension(base64) {
 
 @Injectable()
 export class TicketService {
-  constructor(@InjectModel('Ticket') private ticketModel: Model<Ticket>) {}
+  constructor(
+    @InjectModel('Ticket') private ticketModel: Model<Ticket>,
+    private readonly pubSub: PubSub,
+  ) {}
 
   async generateClientId(): Promise<number> {
     let index = 0;
@@ -150,9 +154,12 @@ export class TicketService {
   }
  * 
  */
-  async getTicketForCoordinator() {
+  async getTicketForCoordinator(page: number, nbOfDocument: number) {
+    const skip = (page - 1) * nbOfDocument;
     return await this.ticketModel
-      .find({ statusFinal: true }) // { toCoordinator: false }
+      .find({ statusFinal: true })
+      .limit(nbOfDocument)
+      .skip(skip) // { toCoordinator: false }
       .then((res) => {
         return res;
       })
@@ -381,31 +388,8 @@ export class TicketService {
   }
 
   async getTicketByTech(name: string, role: string) {
-    // const skip = (page - 1) * numberOfTicketPerPage;
-    // when getting the amount of ticket add them 20 to imptove UI the same thing for skip
-    // numberOfTicketPerPage += 20;
-    // skip += 20;
-    // numberOfTicketPerPage = 30 to improve UI
-    // skip = 30 to skip 30 docs
-
     let returnTicket = await this.getTicketReturned();
 
-    //  -------------------------------------------------
-    let admin = await this.ticketModel
-      .find({})
-      .sort({ createdAt: 1 })
-      // .limit(numberOfTicketPerPage)
-      // .skip(skip)
-
-      .then((res) => {
-        console.log('🍬[res]:', res);
-
-        return res;
-      })
-      .catch((err) => {
-        return err;
-      });
-    //  -------------------------------------------------
     let admintech = await this.ticketModel
       .find({
         assignedTo: name,
@@ -480,13 +464,13 @@ export class TicketService {
         return err;
       });
 
-    if (
-      role === ROLE.ADMIN_MANAGER ||
-      // role === ROLE.ADMIN_TECH ||
-      role === ROLE.MANAGER
-    ) {
-      return admin;
-    }
+    // if (
+    //   role === ROLE.ADMIN_MANAGER ||
+    //   // role === ROLE.ADMIN_TECH ||
+    //   role === ROLE.MANAGER
+    // ) {
+    //   return admin;
+    // }
 
     if (role === ROLE.TECH) {
       return tech;
@@ -1208,5 +1192,110 @@ export class TicketService {
         },
       },
     );
+  }
+
+  /** For controller testing purpose */
+
+  async getAllTicketCount() {
+    return this.ticketModel
+      .countDocuments()
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
+
+  async getTicketByTechForController(page: number, nbOfDocument: number) {
+    console.log('🍼️[nbOfDocument]:', nbOfDocument);
+    console.log('🥫[page]:', page);
+
+    const skip = (page - 1) * nbOfDocument;
+    console.log('🍦[skip]:', skip);
+
+    // let returnTicket = await this.getTicketReturned();
+
+    //  -------------------------------------------------
+    let admin = await this.ticketModel
+      .find({})
+      .sort({ createdAt: 1 })
+      .limit(nbOfDocument)
+      .skip(skip)
+
+      .then((res) => {
+        // console.log('🍬[res]:', res);
+
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+    //  -------------------------------------------------
+
+    // if (
+    //   role === ROLE.ADMIN_MANAGER ||
+    //   // role === ROLE.ADMIN_TECH ||
+    //   role === ROLE.MANAGER
+    // ) {
+    //   return admin;
+    // }
+    return admin;
+  }
+
+  async getTicketForMagasinController(page: number, nbOfDocument: number) {
+    const skip = (page - 1) * nbOfDocument;
+    let magasin = await this.ticketModel
+      .find({ toMagasin: true })
+      .limit(nbOfDocument)
+      .skip(skip)
+      .sort({ createdAt: -1 })
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+
+    return magasin;
+  }
+
+  /** For controller testing purpose */
+
+  async getTicketForAdminTech(name: string) {
+    let returnTicket = await this.getTicketReturned();
+
+    let admintech = await this.ticketModel
+      .find({
+        assignedTo: name,
+        status: { $ne: STATUS_TICKET.FINISHED },
+        $and: [
+          {
+            $or: [{ isOpenByTech: false }, { isReparable: true }],
+          },
+        ],
+      })
+      .sort({ createdAt: -1 })
+      .limit(3)
+      .then((res) => {
+        if (returnTicket.length > 0) {
+          console.log('ticket is returned entred');
+          let [returnObj] = returnTicket;
+          returnObj['isReadyForDiag'] = true;
+          console.log(returnObj, 'spreaded arr');
+          res.shift();
+          res.unshift(returnObj);
+          return res;
+        } else if (returnTicket) {
+          console.log('FIFO start');
+          this.getOldestOneTicket(res);
+          return this.getOldestOneTicket(res);
+        }
+      })
+      .catch((err) => {
+        return err;
+      });
+
+    return admintech;
   }
 }

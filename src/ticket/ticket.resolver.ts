@@ -1,6 +1,18 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  Subscription,
+} from '@nestjs/graphql';
 import { TicketService } from './ticket.service';
-import { ResponseDelete, Ticket, Totality } from './entities/ticket.entity';
+import {
+  NotificationTech,
+  ResponseDelete,
+  Ticket,
+  Totality,
+} from './entities/ticket.entity';
 import {
   CreateTicketInput,
   Filter,
@@ -20,10 +32,14 @@ import { User as CurrentUser } from 'src/auth/profile.decorator';
 import { Profile } from 'src/profile/entities/profile.entity';
 import { IssueChart } from 'src/issue/entities/issue.entity';
 import { ROLE } from 'src/auth/roles';
+import { PubSub } from 'graphql-subscriptions';
 
 @Resolver(() => Ticket)
 export class TicketResolver {
-  constructor(private readonly ticketService: TicketService) {}
+  constructor(
+    private readonly ticketService: TicketService,
+    private readonly pubSub: PubSub,
+  ) {}
 
   @Mutation(() => Ticket)
   async createTicket(
@@ -48,11 +64,11 @@ export class TicketResolver {
     }
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Query(() => [Ticket])
-  async getTicketForCoordinator() {
-    return await this.ticketService.getTicketForCoordinator();
-  }
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Query(() => [Ticket])
+  // async getTicketForCoordinator() {
+  //   return await this.ticketService.getTicketForCoordinator();
+  // }
 
   @Query(() => Ticket, { name: 'ticket' })
   findOne(@Args('id', { type: () => Int }) id: number) {
@@ -140,6 +156,20 @@ export class TicketResolver {
     return await this.ticketService.getTicketByTech(
       profile.username,
       profile.role,
+      // numberOfTicketPerPage,
+      // skip,
+    );
+  }
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Query(() => [Ticket])
+  async getTicketForAdminTech(
+    @CurrentUser() profile: Profile,
+    // @Args('numberOfTicketPerPage') numberOfTicketPerPage: number,
+    // @Args('skip') skip: number,
+  ) {
+    return await this.ticketService.getTicketForAdminTech(
+      profile.username,
+      // profile.role,
       // numberOfTicketPerPage,
       // skip,
     );
@@ -322,18 +352,38 @@ export class TicketResolver {
   }
 
   @Mutation(() => Boolean)
-  affectTechToTechByCoordinator(
+  async affectTechToTechByCoordinator(
     @Args('_id') _id: string,
     @Args('sentTo') sentTo: string,
   ) {
-    let affect = this.ticketService.affectTechToTechByCoordinator(_id, sentTo);
-    if (affect) {
+    let affect = await this.ticketService.affectTechToTechByCoordinator(
+      _id,
+      sentTo,
+    );
+
+    if (affect.modifiedCount > 0) {
+      console.log('🍸[affect]:', affect);
+      let infoToSend = { techname: sentTo, message: 'You have new ticket' };
+      console.log('🌮[infoToSend]:', infoToSend);
+      await this.pubSub.publish('send', {
+        notificationTech: { techname: sentTo, message: 'New notifcation' },
+      });
+
       return true;
     } else {
       return false;
     }
   }
 
+  /**
+   *
+   * SUBSCRIPTION NOTIFICATION TO SENT DATA TO TECH
+   */
+
+  @Subscription(() => NotificationTech)
+  notificationTech() {
+    return this.pubSub.asyncIterator('send');
+  }
   @Mutation(() => Boolean)
   setFinalPriceAvaiblableToAdminTech(@Args('_id') _id: string) {
     let affect = this.ticketService.setFinalPriceAvaiblableToAdminTech(_id);

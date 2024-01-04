@@ -16,28 +16,6 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  // async validateUser(username: string, pass: string): Promise<any> {
-  //   const profile = await this.profileService.findOneForAuth(username);
-  //   console.log('profile data', profile);
-  //   if (!profile) {
-  //     throw new HttpException('No email found', HttpStatus.UNAUTHORIZED);
-  //   }
-  //   const matchPassword = await bcrypt.compare(pass, profile.password);
-  //   if (!matchPassword) {
-  //     throw new HttpException('No psw found', HttpStatus.UNAUTHORIZED);
-  //   }
-
-  //   if (profile) {
-  //     const matchpassword = await bcrypt.compare(pass, profile.password);
-  //     if (matchpassword) {
-  //       const { password, ...result } = profile;
-
-  //       return result;
-  //     }
-  //   }
-  //   return null;
-  // }
-
   async validateUser(username: string, password: string): Promise<any> {
     let user = await this.profileService.findOneForAuth(username);
 

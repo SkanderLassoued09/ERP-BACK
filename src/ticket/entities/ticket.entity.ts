@@ -248,3 +248,19 @@ export class ResponseDelete {
   @Field(() => ResponseError, { nullable: true })
   responseError?: ResponseError | null;
 }
+
+@ObjectType()
+export class NotificationTech {
+  @Field({ nullable: true })
+  techname: string;
+  @Field({ nullable: true })
+  message: string;
+}
+
+@ObjectType()
+export class User {
+  @Field()
+  _id: number;
+  @Field()
+  name: string;
+}

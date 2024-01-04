@@ -5,6 +5,7 @@ import { TicketSchema } from 'src/ticket/entities/ticket.entity';
 import { TicketService } from 'src/ticket/ticket.service';
 import { ProfileSchema } from 'src/profile/entities/profile.entity';
 import { ProfileService } from 'src/profile/profile.service';
+import { PubSub } from 'graphql-subscriptions';
 
 @Module({
   imports: [
@@ -16,6 +17,6 @@ import { ProfileService } from 'src/profile/profile.service';
       { name: 'Profile', schema: ProfileSchema },
     ]),
   ],
-  providers: [NotificationsGateway, TicketService, ProfileService],
+  providers: [NotificationsGateway, TicketService, ProfileService, PubSub],
 })
 export class NotificationHatewayModule {}
