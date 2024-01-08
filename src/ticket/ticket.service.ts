@@ -1206,6 +1206,16 @@ export class TicketService {
         return err;
       });
   }
+  async getAllTicketCountMagasin() {
+    return this.ticketModel
+      .countDocuments({ toMagasin: true })
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
 
   async getTicketByTechForController(page: number, nbOfDocument: number) {
     console.log('🍼️[nbOfDocument]:', nbOfDocument);

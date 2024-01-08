@@ -34,7 +34,20 @@ import { PubSubModule } from './pub-sub/pub-sub.module';
       introspection: true,
 
       context: ({ req }) => ({ req }),
+
       installSubscriptionHandlers: true,
+      subscriptions: {
+        // 'graphql-ws': true,
+        'subscriptions-transport-ws': {
+          keepAlive: 5000,
+          onConnect: () => {
+            console.log('🍡 connected');
+          },
+          onDisconnect: () => {
+            console.log('🍖 Disconnect');
+          },
+        },
+      },
     }),
 
     ServeStaticModule.forRoot({

@@ -32,7 +32,7 @@ export class TicketController {
       nbOfDocument,
     );
 
-    let all = await this.ticketService.getAllTicketCount();
+    let all = await this.ticketService.getAllTicketCountMagasin();
 
     return { getAllTicketMagasin: responseData, allTicketCount: all };
   }
