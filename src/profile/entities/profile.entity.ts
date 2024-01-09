@@ -86,21 +86,19 @@ export class ChartIssueByTech {
 }
 
 @ObjectType()
-export class GetTicketByProfile {
+export class GetTicket_Diag_Rep_ByProfile {
   @Field({ nullable: true })
   techName: string;
   @Field({ nullable: true })
-  totalDiag: string;
+  totalDiag: number;
   @Field({ nullable: true })
-  totalRep: string;
+  totalRep: number;
   @Field({ nullable: true })
-  moyDiag: string;
+  moyDiag: number;
   @Field({ nullable: true })
-  moyRep: string;
+  moyRep: number;
   @Field({ nullable: true })
   techCostRep: number;
   @Field({ nullable: true })
   techCostDiag: number;
-  // @Field(() => [ChartIssueByTech])
-  // chartIssueByTech: ChartIssueByTech;
 }

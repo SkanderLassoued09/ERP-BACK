@@ -114,9 +114,9 @@ export class MagasinUpdateData {
 }
 
 @InputType()
-export class Filter {
+export class FiltreWorking {
   @Field()
   start: string;
   @Field({ nullable: true })
-  end: string | null;
+  end: string;
 }

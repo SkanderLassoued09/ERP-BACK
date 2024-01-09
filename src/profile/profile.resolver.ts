@@ -1,8 +1,7 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { ProfileService } from './profile.service';
 import {
-  ClientByRegionChart,
-  GetTicketByProfile,
+  GetTicket_Diag_Rep_ByProfile,
   Profile,
   TechTickets,
 } from './entities/profile.entity';
@@ -114,46 +113,50 @@ export class ProfileResolver {
     }
   }
 
-  calculateTechCoast(time: string, givenPrice: number) {
-    const [hh, mm, ss] = time.split(':').map(Number);
-    const totalMilliseconds = hh * 3600000 + mm * 60000 + ss * 1000;
-    const totalHours = totalMilliseconds / 3600000;
-    const totalCost = totalHours * givenPrice; // price per hour nezih
-    return totalCost.toFixed(3);
-  }
-
-  @Query(() => [GetTicketByProfile])
-  async getTicketByProfile(@Args('givenPrice') givenPrice: number) {
+  @Query(() => [GetTicket_Diag_Rep_ByProfile])
+  async getTechWorkVolume(@Args('givenPrice') givenPrice: number) {
     let dataDiag = await this.profileService.getTicketByProfileDiag();
     let dataRep = await this.profileService.getTicketByProfileRep();
 
-    const combinedData = dataDiag.map((diag) => {
-      const rep = dataRep.find((rep) => rep.techName === diag.techName);
-
-      if (diag.totalDiag !== undefined && rep !== undefined) {
-        let diagCost = this.sumTimes(diag.totalDiag || null);
-        let repCost = this.sumTimes(rep.totalRep || null);
-
-        if (diagCost !== null && repCost !== null) {
-          return {
-            techName: diag.techName,
-            totalDiag: this.sumTimes(diag.totalDiag) || '0',
-            totalRep: this.sumTimes(rep.totalRep) || '0',
-            techCostDiag: this.calculateTechCoast(diagCost, givenPrice),
-            techCostRep: this.calculateTechCoast(repCost, givenPrice),
-            moyRep: this.avgTime(rep.totalRep),
-            moyDiag: this.avgTime(diag.totalDiag),
-          };
-        } else {
-          throw new BadRequestException();
-        }
-      } else {
-        throw new BadRequestException();
+    function calculateTotalTime(arr) {
+      if (arr.length === 0) {
+        return 0;
       }
+      const totalMinutes = arr.reduce((acc, timeStr) => {
+        const [hours, minutes, seconds] = timeStr.trim().split(':').map(Number);
+        return acc + hours * 60 + minutes + seconds / 60;
+      }, 0);
+      return Math.round(totalMinutes);
+    }
+
+    const result: GetTicket_Diag_Rep_ByProfile[] = [];
+    dataDiag.forEach((diag) => {
+      const profile = new GetTicket_Diag_Rep_ByProfile();
+
+      profile.techName = diag.techName;
+      profile.totalDiag = calculateTotalTime(diag.totalDiag);
+      profile.moyDiag =
+        diag.totalDiag.length === 0
+          ? 0
+          : calculateTotalTime(diag.totalDiag) / diag.totalDiag.length;
+
+      profile.techCostDiag =
+        (calculateTotalTime(diag.totalDiag) / 60) * givenPrice;
+
+      const rep = dataRep.forEach((r) => r.techName === diag.techName);
+      if (rep) {
+        profile.totalRep = calculateTotalTime(rep.totalRep);
+        profile.moyRep =
+          diag.totalRep.length === 0
+            ? 0
+            : calculateTotalTime(diag.totalRep) / diag.totalRep.length;
+        profile.techCostRep =
+          (calculateTotalTime(diag.totalRep) / 60) * givenPrice;
+      }
+      result.push(profile);
     });
 
-    console.log('combinedData', combinedData);
-    return combinedData;
+    return result;
   }
 
   @Mutation(() => Boolean)

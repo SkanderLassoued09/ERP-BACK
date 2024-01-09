@@ -52,4 +52,20 @@ export class TicketController {
 
     return { getAllTicketCoorinator: responseData, allTicketCount: all };
   }
+
+  @Get('/getTicketManager')
+  async getFinishedTicketController(
+    @Query('indexPage') indexPage: number,
+    @Query('nbOfDocument') nbOfDocument: number,
+    @Req() req: any,
+  ) {
+    let responseData = await this.ticketService.getFinishedTicketController(
+      indexPage,
+      nbOfDocument,
+    );
+
+    let all = await this.ticketService.getCountFoManager();
+
+    return { getAllTicketManager: responseData, allTicketCount: all };
+  }
 }

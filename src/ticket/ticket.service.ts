@@ -1,7 +1,7 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import {
   CreateTicketInput,
-  Filter,
+  FiltreWorking,
   MagasinUpdateData,
 } from './dto/create-ticket.input';
 import {
@@ -546,6 +546,7 @@ export class TicketService {
         {
           $set: {
             finalPrice,
+            isFinalPriceAffected: true,
           },
         },
       )
@@ -650,12 +651,12 @@ export class TicketService {
               status: STATUS_TICKET.PENDING,
               finalPrice: updateTicketManager.remise,
               statusFinal: updateTicketManager.statusFinal,
-              bc: `${randompdfFile}.${extension}`,
-              bl: `${randompdfFileBl}.${extensionBl}`,
-              facture: `${randompdfFileFacture}.${extensionFacture}`,
-              Devis: `${randompdfFileDevis}.${extensionDevis}`,
+              // bc: `${randompdfFile}.${extension}`,
+              // bl: `${randompdfFileBl}.${extensionBl}`,
+              // facture: `${randompdfFileFacture}.${extensionFacture}`,
+              // Devis: `${randompdfFileDevis}.${extensionDevis}`,
               toCoordinator: false,
-              isFinalPriceAffected: true,
+              // isFinalPriceAffected: true,
             },
           },
         )
@@ -682,12 +683,12 @@ export class TicketService {
               status: STATUS_TICKET.IGNORED,
               finalPrice: updateTicketManager.remise,
               statusFinal: updateTicketManager.statusFinal,
-              bc: `${randompdfFile}.${extension}`,
-              bl: `${randompdfFileBl}.${extensionBl}`,
-              facture: `${randompdfFileFacture}.${extensionFacture}`,
-              Devis: `${randompdfFileDevis}.${extensionDevis}`,
+              // bc: `${randompdfFile}.${extension}`,
+              // bl: `${randompdfFileBl}.${extensionBl}`,
+              // facture: `${randompdfFileFacture}.${extensionFacture}`,
+              // Devis: `${randompdfFileDevis}.${extensionDevis}`,
               toCoordinator: false,
-              isFinalPriceAffected: true,
+              // isFinalPriceAffected: true,
             },
           },
         )
@@ -1008,45 +1009,29 @@ export class TicketService {
         },
       )
       .then((res) => {
-        console.log(res, 'set admin tech');
+        console.log(res, 'set admin manager');
         return res;
       })
       .catch((err) => {
         return err;
       });
   }
-  filterGain(filterGain: Filter) {
-    // console.log(filterGain.start, 'filter  start');
-    // console.log(typeof filterGain.end, 'filter gain end');
-    const startDate =
-      filterGain.start !== (null || 'null') ? new Date(filterGain.start) : null;
-    const endDate =
-      filterGain.end !== (null || 'null') ? new Date(filterGain.end) : null;
+  async filterGainWorking(filter: FiltreWorking) {
+    const startDate = filter.start || new Date().toISOString;
+    const endDate = filter.end || new Date().toISOString;
 
-    let match = {};
-    if (startDate && endDate === null) {
-      match['$gte'] = startDate;
+    try {
+      const res = await this.ticketModel
+        .find({
+          createdAt: { $gte: startDate, $lte: endDate },
+        })
+        .select('composants _id createdAt price finalPrice status')
+        .exec();
+      console.log(res, 'res');
+      return res;
+    } catch (err) {
+      throw err;
     }
-
-    if (startDate && endDate) {
-      match['$gte'] = startDate;
-      match['$lte'] = endDate;
-    }
-
-    console.log(match, 'condition');
-    return this.ticketModel
-      .find({
-        // Use createdAt field for date filtering
-        createdAt: match,
-      })
-      .exec()
-      .then((res) => {
-        console.log(res, 'res');
-        return res;
-      })
-      .catch((err) => {
-        throw err;
-      });
   }
 
   getTicketbyId(id: string) {
@@ -1268,6 +1253,32 @@ export class TicketService {
       });
 
     return magasin;
+  }
+
+  async getFinishedTicketController(page: number, nbOfDocument: number) {
+    const skip = (page - 1) * nbOfDocument;
+    return await this.ticketModel
+      .find({ IsFinishedAdmins: true })
+      .limit(nbOfDocument)
+      .skip(skip)
+      .then((res) => {
+        console.log(res, 'manager');
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
+
+  async getCountFoManager() {
+    return await this.ticketModel
+      .countDocuments({ IsFinishedAdmins: true })
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
   }
 
   /** For controller testing purpose */

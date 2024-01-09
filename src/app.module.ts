@@ -23,8 +23,8 @@ import { PubSubModule } from './pub-sub/pub-sub.module';
   imports: [
     PubSubModule,
     MongooseModule.forRoot(
-      // 'mongodb+srv://skander009:pAkAJsxUvBbzsIv8@tpedb.yy1h9.mongodb.net/ERP?retryWrites=true&w=majority',
-      'mongodb://localhost:27017/erp',
+      'mongodb+srv://skander009:pAkAJsxUvBbzsIv8@tpedb.yy1h9.mongodb.net/ERP?retryWrites=true&w=majority',
+      // 'mongodb://localhost:27017/erp',
     ),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

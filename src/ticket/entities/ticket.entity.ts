@@ -26,7 +26,7 @@ export const TicketSchema = new mongoose.Schema(
     issue: String,
     status: { type: String, required: false, default: STATUS_TICKET.PENDING },
     // to handle btn final affectaion price // before discount
-    isFinalPriceAffected: { type: Boolean, required: false },
+    isFinalPriceAffected: { type: Boolean, required: false, default: false },
     isOpenByTech: { type: Boolean, required: false, default: false },
     diagnosticTimeByTech: String,
     reparationTimeByTech: String,

@@ -15,7 +15,7 @@ import {
 } from './entities/ticket.entity';
 import {
   CreateTicketInput,
-  Filter,
+  FiltreWorking,
   MagasinUpdateData,
 } from './dto/create-ticket.input';
 import {
@@ -405,8 +405,8 @@ export class TicketResolver {
   }
 
   @Mutation(() => [Ticket])
-  filterGain(@Args('filter') filterGain: Filter) {
-    return this.ticketService.filterGain(filterGain);
+  filterGainWorking(@Args('filterDate') filterGain: FiltreWorking) {
+    return this.ticketService.filterGainWorking(filterGain);
   }
   @Mutation(() => Ticket)
   getTicketById(@Args('id') id: string) {
