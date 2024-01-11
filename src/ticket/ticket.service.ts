@@ -546,6 +546,7 @@ export class TicketService {
         {
           $set: {
             finalPrice,
+            finalPriceToAdminTech: true, // fired when administrator set a final price then disable btn
           },
         },
       )
@@ -979,13 +980,33 @@ export class TicketService {
     return Promise.all([{ totality: totalityTypes, count: totalTicketCount }]);
   }
 
-  setFinalPriceAvaiblableToAdminTech(_id: string) {
+  setfinalPriceToAdminTechtoFalseAfterManagerAffectFinalPrice(_id: string) {
     return this.ticketModel
       .updateOne(
         { _id },
         {
           $set: {
-            finalPriceToAdminTech: true,
+            finalPriceToAdminTech: false,
+          },
+        },
+      )
+      .then((res) => {
+        console.log(res, 'set admin tech');
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
+  setfinalPriceToAdminManafertoFalseAfterAdlinManagerAffectFinalPrice(
+    _id: string,
+  ) {
+    return this.ticketModel
+      .updateOne(
+        { _id },
+        {
+          $set: {
+            finalPriceToAdminManager: false,
           },
         },
       )

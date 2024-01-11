@@ -385,8 +385,27 @@ export class TicketResolver {
     return this.pubSub.asyncIterator('send');
   }
   @Mutation(() => Boolean)
-  setFinalPriceAvaiblableToAdminTech(@Args('_id') _id: string) {
-    let affect = this.ticketService.setFinalPriceAvaiblableToAdminTech(_id);
+  setfinalPriceToAdminTechtoFalseAfterManagerAffectFinalPrice(
+    @Args('_id') _id: string,
+  ) {
+    let affect =
+      this.ticketService.setfinalPriceToAdminTechtoFalseAfterManagerAffectFinalPrice(
+        _id,
+      );
+    if (affect) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  @Mutation(() => Boolean)
+  setfinalPriceToAdminManafertoFalseAfterAdlinManagerAffectFinalPrice(
+    @Args('_id') _id: string,
+  ) {
+    let affect =
+      this.ticketService.setfinalPriceToAdminManafertoFalseAfterAdlinManagerAffectFinalPrice(
+        _id,
+      );
     if (affect) {
       return true;
     } else {
